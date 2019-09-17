@@ -14,15 +14,15 @@ String::String(const String &s) {
   for (unsigned int i = 0; i < sz; i++) ptr[i] = s.ptr[sz];
 }
 
-unsigned int String::size() {
+unsigned int String::size() const {
   return sz;
 }
 
-bool String::isEmpty() {
+bool String::isEmpty() const {
   return sz == 0;
 }
 
-bool String::operator==(const char *s) {
+bool String::operator==(const char *s) const {
   bool result = true;
   for (unsigned int i = 0; i < sz && s[i] != '\0'; i++) {
     if (ptr[i] != s[i]) {
@@ -33,7 +33,7 @@ bool String::operator==(const char *s) {
   return result;
 }
 
-bool String::operator==(const String &s) {
+bool String::operator==(const String &s) const {
   if (sz != s.sz) return false;
   for (unsigned int i = 0; i < sz; i++) {
     if (ptr[i] != s.ptr[i]) {
@@ -43,7 +43,7 @@ bool String::operator==(const String &s) {
   return true;
 }
 
-char String::operator[](unsigned int i) {
+char String::operator[](unsigned int i) const {
   return ptr[i];
 }
 
