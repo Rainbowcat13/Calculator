@@ -8,10 +8,12 @@ struct KeyHash {
   unsigned long operator()(const K& key);
 };
 
+#ifdef STRING_H
 template<>
 struct KeyHash<String> {
   unsigned long operator()(const String &key);
 };
+#endif
 
 template<typename K, typename V>
 class HashNode {
@@ -23,15 +25,15 @@ class HashNode {
 };
 
 template<typename K, typename V>
-HashNode<K, V> *clone(HashNode<K, V> *n) {
+HashNode<K, V> *cloneNodes(HashNode<K, V> *n) {
   if (n == nullptr) return nullptr;
   return new HashNode<K, V>(n->key, n->value, clone(n->next));
 }
 
 template<typename K, typename V>
-void clear(HashNode<K, V> *n) {
+void clearNodes(HashNode<K, V> *n) {
   if (n == nullptr) return;
-  clear(n->next);
+  clearNodes(n->next);
   delete n;
 }
 
@@ -50,9 +52,10 @@ class HashMap {
 
 template<typename K>
 unsigned long KeyHash<K>::operator()(const K& key) {
-  return reinterpret_cast<unsigned long>(key) % MAP_TABLE_SIZE;
+  return static_cast<unsigned long>(key) % MAP_TABLE_SIZE;
 }
 
+#ifdef STRING_H
 unsigned long KeyHash<String>::operator()(const String &s) {
   const int p = 31;
   long long hashValue = 0, pow = 1;
@@ -62,6 +65,7 @@ unsigned long KeyHash<String>::operator()(const String &s) {
   }
   return hashValue;
 }
+#endif
 
 template<typename K, typename V, typename H>
 HashMap<K, V, H>::HashMap() {
@@ -72,7 +76,7 @@ template<typename K, typename V, typename H>
 HashMap<K, V, H>::HashMap(const HashMap<K, V, H> &m) {
   table = new HashNode<K, V> *[MAP_TABLE_SIZE]();
   for (unsigned int i = 0; i < MAP_TABLE_SIZE; i++) {
-    table[i] = clone(m.table[i]);
+    table[i] = cloneNodes(m.table[i]);
   }
 }
 
@@ -94,7 +98,7 @@ V& HashMap<K, V, H>::operator[](const K &key) {
 
 template<typename K, typename V, typename H>
 bool HashMap<K, V, H>::isEmpty() {
-  for (int i = 0; i < MAP_TABLE_SIZE; i++) {
+  for (unsigned int i = 0; i < MAP_TABLE_SIZE; i++) {
     if (table[i] != nullptr) return false;
   }
   return true;
@@ -103,7 +107,7 @@ bool HashMap<K, V, H>::isEmpty() {
 template<typename K, typename V, typename H>
 void HashMap<K, V, H>::clear() {
   for (unsigned int i = 0; i < MAP_TABLE_SIZE; i++) {
-    clear(table[i]);
+    clearNodes(table[i]);
     table[i] = nullptr;
   }
 }
