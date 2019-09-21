@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 Expression::Expression(Queue<String> q) {
+  // TODO: Expression::Expression(Queue<String>) error handling
   Stack<String> s;
   s.push(String("("));
   q.push(String(")"));
@@ -56,6 +57,7 @@ Expression::Expression(const Expression &e) {
 }
 
 Expression::ResultType Expression::evaluate() const {
+  // TODO: Expression::evaluate() error handling
   Queue<String> q = postfix;
   Stack<ResultType> s;
   while (!q.isEmpty()) {
@@ -84,7 +86,8 @@ Queue<String> Expression::getPostfix() const {
 }
 
 Queue<String> Expression::getVariablesNames() const {
-
+  // TODO: implement Expression::getVariableNames()
+  return Queue<String>();
 }
 
 Expression::ResultType Expression::getVariable(String &s) const {
@@ -131,11 +134,11 @@ bool Expression::isFunction(const String &s) {
 }
 
 bool Expression::isUnaryFunction(const String &s) {
-  return s == "sin" || s == "cos";
+  return s == "sin" || s == "cos" || s == "exp" || s == "abs" || s == "sqrt" || s == "cbrt";
 }
 
 bool Expression::isBinaryFunction(const String &s) {
-  return s == "log";
+  return s == "log" || s == "min" || s == "max";
 }
 
 bool Expression::isConstant(const String &s) {
@@ -193,6 +196,10 @@ Expression::ResultType Expression::doUnaryOperation(const String &s, Expression:
   if (s == "~") return -a;
   if (s == "sin") return Math::sin(a);
   if (s == "cos") return Math::cos(a);
+  if (s == "exp") return Math::exp(a);
+  if (s == "abs") return Math::abs(a);
+  if (s == "sqrt") return Math::sqrt(a);
+  if (s == "cbrt") return Math::cbrt(a);
   throw std::invalid_argument("not an unary operation");
 }
 
@@ -203,6 +210,8 @@ Expression::ResultType Expression::doBinaryOperation(const String &s, Expression
   if (s == "/") return a / b;
   if (s == "^") return Math::pow(a, b);
   if (s == "log") return Math::log(a, b);
+  if (s == "min") return Math::min(a , b);
+  if (s == "max") return Math::max(a, b);
   throw std::invalid_argument("not a binary operation");
 }
 
