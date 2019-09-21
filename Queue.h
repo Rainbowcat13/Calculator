@@ -6,57 +6,69 @@
 template<typename T>
 class Queue {
   public:
-    Queue() {}
+    Queue();
     Queue(const Queue<T> &);
-    void push(T);
-    T top();
+    ~Queue();
+    void push(const T &);
+    const T &top() const;
     T pop();
-    bool isEmpty();
+    bool isEmpty() const;
     void clear();
   private:
-    ListNode<T> *head = nullptr, *tail = nullptr;
+    ListNode<T> *head, *tail;
 };
 
 template<typename T>
-Queue<T>::Queue(const Queue<T> &q) {
-  auto cloned = clone(q.head);
-  head = cloned.first;
-  tail = cloned.second;
+Queue<T>::Queue() {
+  head = nullptr;
+  tail = nullptr;
 }
 
 template<typename T>
-void Queue<T>::push(T value) {
-  auto *newNode = new ListNode<T>(value);
+Queue<T>::Queue(const Queue<T> &q) {
+  head = ListNode<T>::cloneList(q.head);
+  tail = ListNode<T>::endOfList(head);
+}
+
+template<typename T>
+Queue<T>::~Queue() {
+  clear();
+}
+
+template<typename T>
+void Queue<T>::push(const T &ref) {
   if (isEmpty()) {
-    head = tail = newNode;
+    head = new ListNode<T>(ref);
+    tail = head;
   } else {
-    tail = tail->next = newNode;
+    tail->next = new ListNode<T>(ref);
+    tail = tail->next;
   }
 }
 
 template<typename T>
-T Queue<T>::top() {
+const T &Queue<T>::top() const {
   return head->value;
 }
 
 template<typename T>
 T Queue<T>::pop() {
   T result = head->value;
-  ListNode<T> *oldHead = head;
+  ListNode<T> *old = head;
   head = head->next;
-  delete oldHead;
+  delete old;
   return result;
 }
 
 template<typename T>
-bool Queue<T>::isEmpty() {
+bool Queue<T>::isEmpty() const {
   return head == nullptr;
 }
 
 template<typename T>
 void Queue<T>::clear() {
-  clear(head);
-  head = nullptr;
+  ListNode<T>::clearList(head);
+  tail = nullptr;
 }
 
 #endif

@@ -1,30 +1,36 @@
 #include "String.h"
 
 String::String(const char *s) {
-  if (s[0] == '\0') return;
-  for (sz = 1; s[sz] != '\0'; sz++) {}
-  ptr = new char[sz];
-  for (unsigned int i = 0; i < sz; i++) ptr[i] = s[i];
+  for (size = 0; s[size] != '\0'; size++) {}
+  ptr = new char[size + 1];
+  for (unsigned int i = 0; i <= size; i++) ptr[i] = s[i];
 }
 
 String::String(const String &s) {
-  if (s.sz == 0) return;
-  sz = s.sz;
-  ptr = new char[sz];
-  for (unsigned int i = 0; i < sz; i++) ptr[i] = s.ptr[sz];
+  size = s.size;
+  ptr = new char[size + 1];
+  for (unsigned int i = 0; i <= size; i++) ptr[i] = s.ptr[i];
 }
 
-unsigned int String::size() const {
-  return sz;
+String::~String() {
+  //delete[] ptr;
+}
+
+const char *String::data() const {
+  return ptr;
+}
+
+unsigned int String::length() const {
+  return size;
 }
 
 bool String::isEmpty() const {
-  return sz == 0;
+  return size == 0;
 }
 
 bool String::operator==(const char *s) const {
   bool result = true;
-  for (unsigned int i = 0; i < sz && s[i] != '\0'; i++) {
+  for (unsigned int i = 0; i < size && s[i] != '\0'; i++) {
     if (ptr[i] != s[i]) {
       result = false;
       break;
@@ -34,8 +40,8 @@ bool String::operator==(const char *s) const {
 }
 
 bool String::operator==(const String &s) const {
-  if (sz != s.sz) return false;
-  for (unsigned int i = 0; i < sz; i++) {
+  if (size != s.size) return false;
+  for (unsigned int i = 0; i < size; i++) {
     if (ptr[i] != s.ptr[i]) {
       return false;
     }
@@ -45,5 +51,15 @@ bool String::operator==(const String &s) const {
 
 char String::operator[](unsigned int i) const {
   return ptr[i];
+}
+
+unsigned long Hash<String>::operator()(const String &s) const {
+  const int p = 31, mod = static_cast<int>(1e9) + 7;
+  long long hashValue = 0, pow = 1;
+  for (unsigned int i = 0; i < s.length(); i++) {
+    hashValue = (hashValue + s[i] * pow) % mod;
+    pow = (pow * p) % mod;
+  }
+  return hashValue;
 }
 

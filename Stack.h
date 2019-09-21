@@ -6,50 +6,60 @@
 template<typename T>
 class Stack {
   public:
-    Stack() {}
+    Stack();
     Stack(const Stack<T> &);
-    void push(T);
-    T top();
+    ~Stack();
+    void push(const T &);
+    const T &top() const;
     T pop();
-    bool isEmpty();
+    bool isEmpty() const;
     void clear();
   private:
-    ListNode<T> *head = nullptr;
+    ListNode<T> *head;
 };
 
 template<typename T>
+Stack<T>::Stack() {
+  head = nullptr;
+}
+
+template<typename T>
 Stack<T>::Stack(const Stack<T> &s) {
-  head = clone(s.head).first;
+  head = ListNode<T>::cloneList(s.head);
 }
 
 template<typename T>
-void Stack<T>::push(T value) {
-  head = new ListNode<T>(value, head);
+Stack<T>::~Stack() {
+  clear();
 }
 
 template<typename T>
-T Stack<T>::top() {
+void Stack<T>::push(const T &ref) {
+  head = new ListNode<T>(ref, head);
+}
+
+template<typename T>
+const T &Stack<T>::top() const {
   return head->value;
 }
 
 template<typename T>
 T Stack<T>::pop() {
   T result = head->value;
-  ListNode<T> *oldHead = head;
+  ListNode<T> *old = head;
   head = head->next;
-  delete oldHead;
+  delete old;
   return result;
 }
 
 template<typename T>
-bool Stack<T>::isEmpty() {
+bool Stack<T>::isEmpty() const {
   return head == nullptr;
 }
 
 template<typename T>
 void Stack<T>::clear() {
-  clear(head);
-  head = nullptr;
+  ListNode<T>::clearList(head);
 }
 
 #endif
