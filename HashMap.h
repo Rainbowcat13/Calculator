@@ -3,6 +3,7 @@
 
 #include "Hash.h"
 #include "List.h"
+#include <cstddef>
 #include <stdexcept>
 
 template <typename K, typename V> struct MapNode {
@@ -16,7 +17,7 @@ template <typename K, typename V> struct MapNode {
 
 template <typename K, typename V, typename H = Hash<K>> class HashMap {
 public:
-  static const unsigned int TableSize = 1000;
+  static const std::size_t TableSize = 1000;
   HashMap();
   HashMap(const HashMap<K, V, H> &);
   ~HashMap();
@@ -25,7 +26,7 @@ public:
   V remove(const K &);
   void clear();
   bool contains(const K &) const;
-  unsigned int size() const;
+  std::size_t size() const;
   bool isEmpty() const;
   HashMap<K, V, H> &operator=(const HashMap<K, V, H> &);
   V &operator[](const K &);
@@ -34,7 +35,7 @@ public:
 private:
   MapNode<K, V> **table;
   H hasher;
-  unsigned int count;
+  std::size_t count;
   MapNode<K, V> *findNode(const K &) const;
   MapNode<K, V> *takeNode(const K &);
   MapNode<K, V> *insertNode(const K &, const V & = V());
@@ -73,7 +74,7 @@ template <typename K, typename V, typename H>
 HashMap<K, V, H>::HashMap(const HashMap<K, V, H> &m) {
   table = new MapNode<K, V> *[TableSize]();
   count = m.count;
-  for (unsigned int i = 0; i < TableSize; i++) {
+  for (std::size_t i = 0; i < TableSize; i++) {
     table[i] = MapNode<K, V>::cloneMap(m.table[i]);
   }
 }
@@ -86,7 +87,7 @@ template <typename K, typename V, typename H> HashMap<K, V, H>::~HashMap() {
 template <typename K, typename V, typename H>
 List<K> HashMap<K, V, H>::keys() const {
   List<K> res;
-  for (unsigned int i = 0; i < TableSize; i++) {
+  for (std::size_t i = 0; i < TableSize; i++) {
     MapNode<K, V> *n = table[i];
     while (n != nullptr) {
       res.insert(n->key, 0);
@@ -99,7 +100,7 @@ List<K> HashMap<K, V, H>::keys() const {
 template <typename K, typename V, typename H>
 List<V> HashMap<K, V, H>::values() const {
   List<V> res;
-  for (unsigned int i = 0; i < TableSize; i++) {
+  for (std::size_t i = 0; i < TableSize; i++) {
     MapNode<K, V> *n = table[i];
     while (n != nullptr) {
       res.insert(n->value, 0);
@@ -119,7 +120,7 @@ template <typename K, typename V, typename H> V remove(const K &k) {
 }
 
 template <typename K, typename V, typename H> void HashMap<K, V, H>::clear() {
-  for (unsigned int i = 0; i < TableSize; i++) {
+  for (std::size_t i = 0; i < TableSize; i++) {
     MapNode<K, V>::clearMap(table[i]);
   }
   count = 0;
@@ -131,7 +132,7 @@ bool HashMap<K, V, H>::contains(const K &k) const {
 }
 
 template <typename K, typename V, typename H>
-unsigned int HashMap<K, V, H>::size() const {
+std::size_t HashMap<K, V, H>::size() const {
   return count;
 }
 
@@ -142,7 +143,7 @@ bool HashMap<K, V, H>::isEmpty() const {
 
 template <typename K, typename V, typename H>
 HashMap<K, V, H> &HashMap<K, V, H>::operator=(const HashMap<K, V, H> &o) {
-  for (unsigned int i = 0; i < TableSize; i++) {
+  for (std::size_t i = 0; i < TableSize; i++) {
     delete[] table[i];
     table[i] = MapNode<K, V>::cloneMap(o.table[i]);
   }

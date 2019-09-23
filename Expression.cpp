@@ -121,7 +121,7 @@ void Expression::setVariable(String &s, Expression::ResultType value) {
 
 bool Expression::isNumber(const String &s) {
   bool dot = false, exp = false, result = true;
-  for (unsigned int i = 0; i < s.length(); i++) {
+  for (std::size_t i = 0; i < s.length(); i++) {
     if (!dot && s[i] == '.') {
       dot = true;
     } else if (!exp && s[i] == 'e') {
@@ -174,7 +174,7 @@ bool Expression::isComma(const String &s) { return s == ","; }
 bool Expression::isVariable(const String &s) {
   if (isFunction(s) || isConstant(s) || s[0] < 'a' || s[0] > 'z')
     return false;
-  for (unsigned int i = 0; i < s.length(); i++) {
+  for (std::size_t i = 0; i < s.length(); i++) {
     if ((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'z'))
       return false;
   }
@@ -269,7 +269,7 @@ Expression::ResultType Expression::parseNumber(const String &s) {
   bool flagDot = false, flagExp = false, numNegative = false,
        expNegative = false;
   long long number = 0, dotPos = 0, exponent = 0, multiplier = 1;
-  for (unsigned int i = 0; i < s.length(); i++) {
+  for (std::size_t i = 0; i < s.length(); i++) {
     if (s[i] == '.') {
       if (flagExp || flagDot)
         failNotANumber(s);

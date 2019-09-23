@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include "ListNode.h"
+#include <cstddef>
 #include <stdexcept>
 
 template <typename T> class List {
@@ -9,18 +10,18 @@ public:
   List();
   List(const List<T> &);
   ~List();
-  T &insert(const T &, unsigned int);
-  T remove(unsigned int);
+  T &insert(const T &, std::size_t);
+  T remove(std::size_t);
   void clear();
-  unsigned int size() const;
+  std::size_t size() const;
   bool isEmpty() const;
   List<T> &operator=(const List<T> &);
-  T &operator[](unsigned int);
-  const T &operator[](unsigned int) const;
+  T &operator[](std::size_t);
+  const T &operator[](std::size_t) const;
 
 private:
   ListNode<T> *head;
-  unsigned int count;
+  std::size_t count;
 };
 
 template <typename T> List<T>::List() {
@@ -35,7 +36,7 @@ template <typename T> List<T>::List(const List<T> &l) {
 
 template <typename T> List<T>::~List() { clear(); }
 
-template <typename T> T &List<T>::insert(const T &e, unsigned int i) {
+template <typename T> T &List<T>::insert(const T &e, std::size_t i) {
   if (i > count)
     throw std::out_of_range("invalid index");
   if (i == 0) {
@@ -51,7 +52,7 @@ template <typename T> T &List<T>::insert(const T &e, unsigned int i) {
   return n->next->value;
 }
 
-template <typename T> T List<T>::remove(unsigned int i) {
+template <typename T> T List<T>::remove(std::size_t i) {
   if (i >= count)
     throw std::out_of_range("invalid index");
   if (i == 0) {
@@ -78,7 +79,7 @@ template <typename T> void List<T>::clear() {
   count = 0;
 }
 
-template <typename T> unsigned int List<T>::size() const { return count; }
+template <typename T> std::size_t List<T>::size() const { return count; }
 
 template <typename T> bool List<T>::isEmpty() const { return count == 0; }
 
@@ -89,7 +90,7 @@ template <typename T> List<T> &List<T>::operator=(const List<T> &l) {
   return *this;
 }
 
-template <typename T> T &List<T>::operator[](unsigned int i) {
+template <typename T> T &List<T>::operator[](std::size_t i) {
   if (i >= count)
     throw std::out_of_range("invalid index");
   ListNode<T> *n = head;
@@ -98,7 +99,7 @@ template <typename T> T &List<T>::operator[](unsigned int i) {
   return n->value;
 }
 
-template <typename T> const T &List<T>::operator[](unsigned int i) const {
+template <typename T> const T &List<T>::operator[](std::size_t i) const {
   if (i >= count)
     throw std::out_of_range("invalid index");
   ListNode<T> *n = head;
