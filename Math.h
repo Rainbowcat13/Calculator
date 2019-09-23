@@ -20,6 +20,7 @@ public:
   static double cbrt(double);
   static double min(double, double);
   static double max(double, double);
+
 private:
   static double reduce2Pi(double);
 };

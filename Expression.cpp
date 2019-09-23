@@ -120,22 +120,23 @@ void Expression::setVariable(String &s, Expression::ResultType value) {
 }
 
 bool Expression::isNumber(const String &s) {
-  bool dot = false, exp = false, result = true;
+  bool dot = false, exp = false;
   for (std::size_t i = 0; i < s.length(); i++) {
-    if (!dot && s[i] == '.') {
+    if (i > 0 && !exp && !dot && s[i] == '.') {
       dot = true;
-    } else if (!exp && s[i] == 'e') {
+    } else if (i > 0 && !exp && s[i] == 'e') {
       exp = true;
+    } else if (i == 0 && s[i] == '-') {
+      continue;
     } else if (i > 0 && s[i - 1] == 'e' && (s[i] == '-' || s[i] == '+')) {
       continue;
     } else if (s[i] >= '0' && s[i] <= '9') {
       continue;
     } else {
-      result = false;
-      break;
+      return false;
     }
   }
-  return result;
+  return true;
 }
 
 bool Expression::isOperator(const String &s) {
@@ -271,11 +272,11 @@ Expression::ResultType Expression::parseNumber(const String &s) {
   long long number = 0, dotPos = 0, exponent = 0, multiplier = 1;
   for (std::size_t i = 0; i < s.length(); i++) {
     if (s[i] == '.') {
-      if (flagExp || flagDot)
+      if (i == 0 || flagExp || flagDot)
         failNotANumber(s);
       flagDot = true;
     } else if (s[i] == 'e') {
-      if (flagExp)
+      if (i == 0 || flagExp)
         failNotANumber(s);
       flagExp = true;
     } else if (s[i] == '-') {
