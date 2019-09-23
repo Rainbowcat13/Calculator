@@ -3,7 +3,7 @@
 double EPS = 1e-9;
 double NAN = 0.0 / 0.0;
 double POS_INF = 1.0 / 0.0;
-double NEG_INF = -1.0/ 0.0;
+double NEG_INF = -1.0 / 0.0;
 
 double Math::sin(double a) {
   // TODO: reduce 2 * PI in Math::sin(double)
@@ -34,12 +34,14 @@ double Math::cos(double a) {
 }
 
 double Math::log(double a, double b) {
-  if (a <= 0 || b <= 0 || a == 1) return NAN;
+  if (a <= 0 || b <= 0 || a == 1)
+    return NAN;
   return log(b) / log(a);
 }
 
 double Math::log(double a) {
-  if (a <= 0) return NAN;
+  if (a <= 0)
+    return NAN;
   double x0 = a, x1 = x0 - (exp(x0) - a) / exp(x0);
   while (abs(x1 - x0) > 1e-9) {
     x0 = x1;
@@ -49,26 +51,24 @@ double Math::log(double a) {
 }
 
 double Math::exp(double a) {
-  // TODO: do smth with precision of Math::exp(double)
+  // TODO: implement better Math::exp(double)
   double res = 1.0;
-  for (int i = 1001; i > 0; i--) {
+  for (int i = 13; i > 0; i--) {
     res = 1.0 + a * res / i;
   }
   return res;
 }
 
 double Math::pow(double a, double b) {
-  // TODO: check arguments of Math::pow(double, double)
-  // TODO: integer power in Math::pow(double, double)
+  // TODO: implement better Math::pow(double, double)
   return exp(log(a) * b);
 }
 
-double Math::abs(double a) {
-  return a >= 0 ? a : -a;
-}
+double Math::abs(double a) { return a >= 0 ? a : -a; }
 
 double Math::sqrt(double a) {
-  if (a < 0) return NAN;
+  if (a < 0)
+    return NAN;
   double x0 = a / 2, x1 = x0 - (x0 * x0 - a) / (2 * x0);
   while (abs(x1 - x0) > 1e-9) {
     x0 = x1;
@@ -86,11 +86,6 @@ double Math::cbrt(double a) {
   return x1;
 }
 
-double Math::min(double a, double b) {
-  return a < b ? a : b;
-}
+double Math::min(double a, double b) { return a < b ? a : b; }
 
-double Math::max(double a, double b) {
-  return a > b ? a : b;
-}
-
+double Math::max(double a, double b) { return a > b ? a : b; }

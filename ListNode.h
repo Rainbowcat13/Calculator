@@ -1,43 +1,41 @@
 #ifndef LISTNODE_H
 #define LISTNODE_H
 
-template<typename T>
-class ListNode {
-  public:
-    static ListNode<T> *cloneList(ListNode<T> *);
-    static ListNode<T> *endOfList(ListNode<T> *);
-    static void clearList(ListNode<T> *&);
-    explicit ListNode(const T &, ListNode<T> * = nullptr);
-    T value;
-    ListNode *next;
+template <typename T> class ListNode {
+public:
+  static ListNode<T> *cloneList(ListNode<T> *);
+  static ListNode<T> *endOfList(ListNode<T> *);
+  static void clearList(ListNode<T> *&);
+  explicit ListNode(const T &, ListNode<T> * = nullptr);
+  T value;
+  ListNode *next;
 };
 
-template<typename T>
-ListNode<T> *ListNode<T>::cloneList(ListNode<T> *n) {
-  if (n == nullptr) return nullptr;
+template <typename T> ListNode<T> *ListNode<T>::cloneList(ListNode<T> *n) {
+  if (n == nullptr)
+    return nullptr;
   return new ListNode<T>(n->value, cloneList(n->next));
 }
 
-template<typename T>
-ListNode<T> *ListNode<T>::endOfList(ListNode<T> *n) {
-  if (n == nullptr) return nullptr;
-  if (n->next == nullptr) return n;
+template <typename T> ListNode<T> *ListNode<T>::endOfList(ListNode<T> *n) {
+  if (n == nullptr)
+    return nullptr;
+  if (n->next == nullptr)
+    return n;
   return endOfList(n->next);
 }
 
-template<typename T>
-void ListNode<T>::clearList(ListNode<T> *&n) {
-  if (n == nullptr) return;
+template <typename T> void ListNode<T>::clearList(ListNode<T> *&n) {
+  if (n == nullptr)
+    return;
   clearList(n->next);
   delete n;
   n = nullptr;
 }
 
-template<typename T>
-ListNode<T>::ListNode(const T &ref, ListNode<T> *next) {
+template <typename T> ListNode<T>::ListNode(const T &ref, ListNode<T> *next) {
   this->value = ref;
   this->next = next;
 }
 
 #endif
-
