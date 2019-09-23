@@ -72,7 +72,7 @@ Expression::Expression(Queue<String> q) {
 Expression::Expression(const Expression &e) { postfix = e.postfix; }
 
 Expression::ResultType Expression::evaluate() const {
-  // TODO: Expression::evaluate() error handling
+  if (postfix.isEmpty()) return 0;
   Queue<String> q = postfix;
   Stack<ResultType> s;
   while (!q.isEmpty()) {
@@ -84,16 +84,22 @@ Expression::ResultType Expression::evaluate() const {
     } else if (isVariable(v)) {
       s.push(getVariable(v));
     } else if (isBinaryOperator(v) || isBinaryFunction(v)) {
-      ResultType b = s.pop(), a = s.pop();
+      if (s.isEmpty()) failMissingOperand();
+      ResultType b = s.pop();
+      if (s.isEmpty()) failMissingOperand();
+      ResultType a = s.pop();
       s.push(doBinaryOperation(v, a, b));
     } else if (isUnaryOperator(v) || isUnaryFunction(v)) {
+      if (s.isEmpty()) failMissingOperand();
       ResultType a = s.pop();
       s.push(doUnaryOperation(v, a));
     } else {
       failWrongToken(v);
     }
   }
-  return s.pop();
+  ResultType res = s.pop();
+  if (!s.isEmpty()) failMissingOperator();
+  return res;
 }
 
 Queue<String> Expression::getPostfix() const { return postfix; }
@@ -351,3 +357,12 @@ void Expression::failMissingLeftBrace() {
 void Expression::failMissingRightBrace() {
   throw std::invalid_argument("missing right brace");
 }
+
+void Expression::failMissingOperand() {
+  throw std::invalid_argument("missing operand");
+}
+
+void Expression::failMissingOperator() {
+  throw std::invalid_argument("missing operator");
+}
+

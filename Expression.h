@@ -55,6 +55,8 @@ private:
   static void failWrongBraceType(const String &);
   static void failMissingLeftBrace();
   static void failMissingRightBrace();
+  static void failMissingOperand();
+  static void failMissingOperator();
 };
 
 #endif
