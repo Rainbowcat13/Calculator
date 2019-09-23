@@ -27,6 +27,7 @@ public:
   bool contains(const K &) const;
   unsigned int size() const;
   bool isEmpty() const;
+  HashMap<K, V, H> &operator=(const HashMap<K, V, H> &);
   V &operator[](const K &);
   const V &operator[](const K &) const;
 
@@ -79,6 +80,7 @@ HashMap<K, V, H>::HashMap(const HashMap<K, V, H> &m) {
 
 template <typename K, typename V, typename H> HashMap<K, V, H>::~HashMap() {
   clear();
+  delete[] table;
 }
 
 template <typename K, typename V, typename H>
@@ -136,6 +138,16 @@ unsigned int HashMap<K, V, H>::size() const {
 template <typename K, typename V, typename H>
 bool HashMap<K, V, H>::isEmpty() const {
   return count == 0;
+}
+
+template <typename K, typename V, typename H>
+HashMap<K, V, H> &HashMap<K, V, H>::operator=(const HashMap<K, V, H> &o) {
+  for (unsigned int i = 0; i < TableSize; i++) {
+    delete[] table[i];
+    table[i] = MapNode<K, V>::cloneMap(o.table[i]);
+  }
+  count = o.count;
+  return *this;
 }
 
 template <typename K, typename V, typename H>

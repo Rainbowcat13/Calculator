@@ -13,6 +13,7 @@ public:
   T pop();
   bool isEmpty() const;
   void clear();
+  Stack<T> &operator=(const Stack<T> &);
 
 private:
   ListNode<T> *head;
@@ -43,5 +44,11 @@ template <typename T> T Stack<T>::pop() {
 template <typename T> bool Stack<T>::isEmpty() const { return head == nullptr; }
 
 template <typename T> void Stack<T>::clear() { ListNode<T>::clearList(head); }
+
+template <typename T> Stack<T> &Stack<T>::operator=(const Stack<T> &s) {
+  clear();
+  head = ListNode<T>::cloneList(s.head);
+  return *this;
+}
 
 #endif

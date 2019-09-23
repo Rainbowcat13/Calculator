@@ -1,8 +1,22 @@
 #include "String.h"
 
+String::String() {
+  ptr = new char[1]{'\0'};
+  size = 0;
+}
+
+String::String(char c, unsigned int n) {
+  ptr = new char[n + 1];
+  size = n;
+  ptr[n] = '\0';
+  for (unsigned int i = 0; i < n; i++)
+    ptr[i] = c;
+}
+
 String::String(const char *s) {
-  for (size = 0; s[size] != '\0'; size++) {
-  }
+  size = 0;
+  while (s[size] != '\0')
+    size++;
   ptr = new char[size + 1];
   for (unsigned int i = 0; i <= size; i++)
     ptr[i] = s[i];
@@ -15,15 +29,42 @@ String::String(const String &s) {
     ptr[i] = s.ptr[i];
 }
 
-String::~String() {
-  // delete[] ptr;
-}
+String::~String() { delete[] ptr; }
 
 const char *String::data() const { return ptr; }
 
 unsigned int String::length() const { return size; }
 
 bool String::isEmpty() const { return size == 0; }
+
+String &String::operator=(char c) {
+  delete[] ptr;
+  ptr = new char[2]{c, '\0'};
+  size = 1;
+  return *this;
+}
+
+String &String::operator=(const char *s) {
+  delete[] ptr;
+  size = 0;
+  while (s[size] != '\0')
+    size++;
+  ptr = new char[size + 1];
+  for (unsigned int i = 0; i <= size; i++)
+    ptr[i] = s[i];
+  return *this;
+}
+
+String &String::operator=(const String &s) {
+  delete[] ptr;
+  ptr = new char[s.size + 1];
+  size = s.size;
+  for (unsigned int i = 0; i <= size; i++)
+    ptr[i] = s.ptr[i];
+  return *this;
+}
+
+bool String::operator==(char c) const { return size == 1 && ptr[0] == c; }
 
 bool String::operator==(const char *s) const {
   unsigned int i;

@@ -13,6 +13,7 @@ public:
   T pop();
   bool isEmpty() const;
   void clear();
+  Queue<T> &operator=(const Queue<T> &);
 
 private:
   ListNode<T> *head, *tail;
@@ -55,6 +56,13 @@ template <typename T> bool Queue<T>::isEmpty() const { return head == nullptr; }
 template <typename T> void Queue<T>::clear() {
   ListNode<T>::clearList(head);
   tail = nullptr;
+}
+
+template <typename T> Queue<T> &Queue<T>::operator=(const Queue<T> &q) {
+  clear();
+  head = ListNode<T>::cloneList(q.head);
+  tail = ListNode<T>::endOfList(head);
+  return *this;
 }
 
 #endif

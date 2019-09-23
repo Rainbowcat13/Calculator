@@ -1,8 +1,7 @@
 #ifndef LISTNODE_H
 #define LISTNODE_H
 
-template <typename T> class ListNode {
-public:
+template <typename T> struct ListNode {
   static ListNode<T> *cloneList(ListNode<T> *);
   static ListNode<T> *endOfList(ListNode<T> *);
   static void clearList(ListNode<T> *&);
@@ -33,9 +32,10 @@ template <typename T> void ListNode<T>::clearList(ListNode<T> *&n) {
   n = nullptr;
 }
 
-template <typename T> ListNode<T>::ListNode(const T &ref, ListNode<T> *next) {
-  this->value = ref;
-  this->next = next;
+template <typename T>
+ListNode<T>::ListNode(const T &valRef, ListNode<T> *nextPtr) {
+  value = valRef;
+  next = nextPtr;
 }
 
 #endif

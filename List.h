@@ -14,6 +14,7 @@ public:
   void clear();
   unsigned int size() const;
   bool isEmpty() const;
+  List<T> &operator=(const List<T> &);
   T &operator[](unsigned int);
   const T &operator[](unsigned int) const;
 
@@ -80,6 +81,13 @@ template <typename T> void List<T>::clear() {
 template <typename T> unsigned int List<T>::size() const { return count; }
 
 template <typename T> bool List<T>::isEmpty() const { return count == 0; }
+
+template <typename T> List<T> &List<T>::operator=(const List<T> &l) {
+  clear();
+  head = ListNode<T>::cloneList(l.head);
+  count = l.count;
+  return *this;
+}
 
 template <typename T> T &List<T>::operator[](unsigned int i) {
   if (i >= count)
