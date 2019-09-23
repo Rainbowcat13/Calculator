@@ -90,8 +90,8 @@ bool String::operator==(const String &s) const {
 char String::operator[](unsigned int i) const { return ptr[i]; }
 
 unsigned long Hash<String>::operator()(const String &s) const {
-  const int p = 31, mod = static_cast<int>(1e9) + 7;
-  long long hashValue = 0, pow = 1;
+  const unsigned long p = 293, mod = static_cast<int>(1e9) + 7;
+  unsigned long hashValue = 0, pow = 1;
   for (unsigned int i = 0; i < s.length(); i++) {
     hashValue = (hashValue + s[i] * pow) % mod;
     pow = (pow * p) % mod;
