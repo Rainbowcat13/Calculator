@@ -3,6 +3,10 @@
 
 class Math {
 public:
+  static const double Epsilon;
+  static const double NotANumber;
+  static const double PositiveInfinity;
+  static const double NegativeInfinity;
   static double sin(double);
   static double cos(double);
   static double log(double, double);

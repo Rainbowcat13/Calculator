@@ -1,15 +1,15 @@
 #include "Math.h"
 
-double EPS = 1e-9;
-double NAN = 0.0 / 0.0;
-double POS_INF = 1.0 / 0.0;
-double NEG_INF = -1.0 / 0.0;
+const double Math::Epsilon = 1e-9;
+const double Math::NotANumber = 0.0 / 0.0;
+const double Math::PositiveInfinity = 1.0 / 0.0;
+const double Math::NegativeInfinity = -1.0 / 0.0;
 
 double Math::sin(double a) {
   // TODO: reduce 2 * PI in Math::sin(double)
   double power = a, factorial = 1, result = a, delta = 1;
   int sign = 1;
-  for (int i = 3; delta > EPS; i += 2) {
+  for (int i = 3; delta > Epsilon; i += 2) {
     sign = -sign;
     power *= a * a;
     factorial *= (i - 1) * i;
@@ -23,7 +23,7 @@ double Math::cos(double a) {
   // TODO: reduce 2 * PI in Math::cos(double)
   double power = 1, factorial = 1, result = 1, delta = 1;
   int sign = 1;
-  for (int i = 2; delta > EPS; i += 2) {
+  for (int i = 2; delta > Epsilon; i += 2) {
     sign = -sign;
     power *= a * a;
     factorial *= (i - 1) * i;
@@ -35,13 +35,13 @@ double Math::cos(double a) {
 
 double Math::log(double a, double b) {
   if (a <= 0 || b <= 0 || a == 1)
-    return NAN;
+    return NotANumber;
   return log(b) / log(a);
 }
 
 double Math::log(double a) {
   if (a <= 0)
-    return NAN;
+    return NotANumber;
   double x0 = a, x1 = x0 - (exp(x0) - a) / exp(x0);
   while (abs(x1 - x0) > 1e-9) {
     x0 = x1;
@@ -68,7 +68,7 @@ double Math::abs(double a) { return a >= 0 ? a : -a; }
 
 double Math::sqrt(double a) {
   if (a < 0)
-    return NAN;
+    return NotANumber;
   double x0 = a / 2, x1 = x0 - (x0 * x0 - a) / (2 * x0);
   while (abs(x1 - x0) > 1e-9) {
     x0 = x1;
