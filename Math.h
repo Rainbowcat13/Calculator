@@ -7,6 +7,8 @@ public:
   static const double NotANumber;
   static const double PositiveInfinity;
   static const double NegativeInfinity;
+  static const double Pi;
+  static const double Euler;
   static double sin(double);
   static double cos(double);
   static double log(double, double);
@@ -18,6 +20,8 @@ public:
   static double cbrt(double);
   static double min(double, double);
   static double max(double, double);
+private:
+  static double reduce2Pi(double);
 };
 
 #endif

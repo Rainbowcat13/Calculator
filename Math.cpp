@@ -1,12 +1,15 @@
 #include "Math.h"
+#include <cstdint>
 
 const double Math::Epsilon = 1e-9;
 const double Math::NotANumber = 0.0 / 0.0;
 const double Math::PositiveInfinity = 1.0 / 0.0;
 const double Math::NegativeInfinity = -1.0 / 0.0;
+const double Math::Pi = 3.14159265358979323846;
+const double Math::Euler = 2.71828182845904523536;
 
 double Math::sin(double a) {
-  // TODO: reduce 2 * PI in Math::sin(double)
+  a = reduce2Pi(a);
   double power = a, factorial = 1, result = a, delta = 1;
   int sign = 1;
   for (int i = 3; delta > Epsilon; i += 2) {
@@ -20,7 +23,7 @@ double Math::sin(double a) {
 }
 
 double Math::cos(double a) {
-  // TODO: reduce 2 * PI in Math::cos(double)
+  a = reduce2Pi(a);
   double power = 1, factorial = 1, result = 1, delta = 1;
   int sign = 1;
   for (int i = 2; delta > Epsilon; i += 2) {
@@ -89,3 +92,10 @@ double Math::cbrt(double a) {
 double Math::min(double a, double b) { return a < b ? a : b; }
 
 double Math::max(double a, double b) { return a > b ? a : b; }
+
+double Math::reduce2Pi(double a) {
+  if (a < 0) return -reduce2Pi(-a);
+  while (a >= 2 * Pi)
+    a -= 2 * Pi;
+  return a;
+}

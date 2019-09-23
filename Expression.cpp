@@ -213,9 +213,9 @@ Expression::Associativity Expression::associativity(const String &s) {
 
 Expression::ResultType Expression::getConstant(const String &s) {
   if (s == "e")
-    return 2.7182818284590452;
+    return Math::Euler;
   if (s == "pi" || s == "π")
-    return 3.1415926535897932;
+    return Math::Pi;
   failNotAConstant(s);
   return Expression::ResultType();
 }
