@@ -72,7 +72,8 @@ Expression::Expression(Queue<String> q) {
 Expression::Expression(const Expression &e) { postfix = e.postfix; }
 
 Expression::ResultType Expression::evaluate() const {
-  if (postfix.isEmpty()) return 0;
+  if (postfix.isEmpty())
+    return 0;
   Queue<String> q = postfix;
   Stack<ResultType> s;
   while (!q.isEmpty()) {
@@ -84,13 +85,16 @@ Expression::ResultType Expression::evaluate() const {
     } else if (isVariable(v)) {
       s.push(getVariable(v));
     } else if (isBinaryOperator(v) || isBinaryFunction(v)) {
-      if (s.isEmpty()) failMissingOperand();
+      if (s.isEmpty())
+        failMissingOperand();
       ResultType b = s.pop();
-      if (s.isEmpty()) failMissingOperand();
+      if (s.isEmpty())
+        failMissingOperand();
       ResultType a = s.pop();
       s.push(doBinaryOperation(v, a, b));
     } else if (isUnaryOperator(v) || isUnaryFunction(v)) {
-      if (s.isEmpty()) failMissingOperand();
+      if (s.isEmpty())
+        failMissingOperand();
       ResultType a = s.pop();
       s.push(doUnaryOperation(v, a));
     } else {
@@ -98,7 +102,8 @@ Expression::ResultType Expression::evaluate() const {
     }
   }
   ResultType res = s.pop();
-  if (!s.isEmpty()) failMissingOperator();
+  if (!s.isEmpty())
+    failMissingOperator();
   return res;
 }
 
@@ -365,4 +370,3 @@ void Expression::failMissingOperand() {
 void Expression::failMissingOperator() {
   throw std::invalid_argument("missing operator");
 }
-

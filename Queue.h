@@ -41,13 +41,15 @@ template <typename T> void Queue<T>::push(const T &ref) {
   }
 }
 
-template <typename T> const T &Queue<T>::front() const { \
-  if (isEmpty()) throw std::out_of_range("queue is empty");
+template <typename T> const T &Queue<T>::front() const {
+  if (isEmpty())
+    throw std::out_of_range("queue is empty");
   return head->value;
 }
 
 template <typename T> T Queue<T>::pop() {
-  if (isEmpty()) throw std::out_of_range("queue is empty");
+  if (isEmpty())
+    throw std::out_of_range("queue is empty");
   T result = head->value;
   ListNode<T> *old = head;
   head = head->next;

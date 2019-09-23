@@ -32,12 +32,14 @@ template <typename T> void Stack<T>::push(const T &ref) {
 }
 
 template <typename T> const T &Stack<T>::top() const {
-  if (isEmpty()) throw std::out_of_range("stack is empty");
+  if (isEmpty())
+    throw std::out_of_range("stack is empty");
   return head->value;
 }
 
 template <typename T> T Stack<T>::pop() {
-  if (isEmpty()) throw std::out_of_range("stack is empty");
+  if (isEmpty())
+    throw std::out_of_range("stack is empty");
   T result = head->value;
   ListNode<T> *old = head;
   head = head->next;
