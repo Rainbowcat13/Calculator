@@ -120,15 +120,20 @@ void Expression::setVariable(String &s, Expression::ResultType value) {
 }
 
 bool Expression::isNumber(const String &s) {
-  bool dot = false, exp = false;
-  for (std::size_t i = 0; i < s.length(); i++) {
-    if (i > 0 && !exp && !dot && s[i] == '.') {
-      dot = true;
-    } else if (i > 0 && !exp && s[i] == 'e') {
-      exp = true;
-    } else if (i == 0 && s[i] == '-') {
-      continue;
-    } else if (i > 0 && s[i - 1] == 'e' && (s[i] == '-' || s[i] == '+')) {
+  if (s.isEmpty())
+    return false;
+  int n = s.length(), numSignPos = -1, dotPos = -1, expPos = -1;
+  for (int i = 0; i < n; i++) {
+    if (s[i] == '.' && i != n - 1 && i > 0 && expPos == -1 && dotPos == -1 &&
+        numSignPos != i - 1) {
+      dotPos = i;
+    } else if (s[i] == 'e' && i != n - 1 && i > 0 && expPos == -1 &&
+               dotPos != i - 1 && numSignPos != i - 1) {
+      expPos = i;
+    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i == 0) {
+      numSignPos = i;
+    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i > 0 &&
+               expPos == i - 1) {
       continue;
     } else if (s[i] >= '0' && s[i] <= '9') {
       continue;
@@ -266,62 +271,54 @@ Expression::ResultType Expression::doBinaryOperation(const String &s,
 
 Expression::ResultType Expression::parseNumber(const String &s) {
   if (s.isEmpty())
-    return 0;
-  bool flagDot = false, flagExp = false, numNegative = false,
-       expNegative = false;
-  long long number = 0, dotPos = 0, exponent = 0, multiplier = 1;
-  for (std::size_t i = 0; i < s.length(); i++) {
-    if (s[i] == '.') {
-      if (i == 0 || flagExp || flagDot)
-        failNotANumber(s);
-      flagDot = true;
-    } else if (s[i] == 'e') {
-      if (i == 0 || flagExp)
-        failNotANumber(s);
-      flagExp = true;
-    } else if (s[i] == '-') {
-      if (i == 0) {
-        numNegative = true;
-      } else if (s[i - 1] == 'e') {
-        expNegative = true;
-      } else {
-        failNotANumber(s);
-      }
-    } else if (s[i] == '+') {
-      if (i != 0 && s[i - 1] != 'e')
-        failNotANumber(s);
+    failNotANumber(s);
+  bool numSign = true, expSign = true;
+  int n = s.length(), numSignPos = -1, fracEndPos = -1, dotPos = -1,
+      expPos = -1;
+  long long num = 0, exp = 0, mul = 1;
+  for (int i = 0; i < n; i++) {
+    if (s[i] == '.' && i != n - 1 && i > 0 && expPos == -1 && dotPos == -1 &&
+        numSignPos != i - 1) {
+      dotPos = i;
+    } else if (s[i] == 'e' && i != n - 1 && i > 0 && expPos == -1 &&
+               dotPos != i - 1 && numSignPos != i - 1) {
+      expPos = i;
+    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i == 0) {
+      numSignPos = i;
+      numSign = (s[i] == '+');
+    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i > 0 &&
+               expPos == i - 1) {
+      expSign = (s[i] == '+');
     } else if (s[i] >= '0' && s[i] <= '9') {
-      if (flagDot && !flagExp)
-        dotPos++;
-      if (flagExp) {
-        exponent = (exponent * 10) + s[i] - '0';
+      if (expPos != -1 && i > expPos) {
+        exp = exp * 10 + s[i] - '0';
+      } else if (dotPos != -1 && i > dotPos) {
+        num = num * 10 + s[i] - '0';
+        fracEndPos = i;
       } else {
-        number = (number * 10) + s[i] - '0';
+        num = num * 10 + s[i] - '0';
       }
     } else {
       failNotANumber(s);
     }
   }
-  if (numNegative)
-    number = -number;
-  if (expNegative) {
-    exponent += dotPos;
-  } else {
-    exponent -= dotPos;
+  if (!numSign)
+    num = -num;
+  if (expSign)
+    exp -= fracEndPos - dotPos;
+  else
+    exp += fracEndPos - dotPos;
+  if (exp < 0) {
+    exp = -exp;
+    expSign = !expSign;
   }
-  if (exponent < 0) {
-    exponent = -exponent;
-    expNegative = !expNegative;
-  }
-  multiplier <<= exponent;
-  while (exponent--) {
-    multiplier += multiplier << 2;
-  }
-  if (expNegative) {
-    return static_cast<ResultType>(number) / multiplier;
-  } else {
-    return static_cast<ResultType>(number) * multiplier;
-  }
+  mul <<= exp;
+  while (exp--)
+    mul += mul << 2;
+  if (expSign)
+    return static_cast<ResultType>(num) * mul;
+  else
+    return static_cast<ResultType>(num) / mul;
 }
 
 void Expression::failWrongToken(const String &s) {
