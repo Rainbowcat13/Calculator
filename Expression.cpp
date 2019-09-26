@@ -322,35 +322,42 @@ Expression::ResultType Expression::parseNumber(const String &s) {
 }
 
 void Expression::failWrongToken(const String &s) {
-  throw std::invalid_argument("wrong token");
+  String msg = "wrong token: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failNotANumber(const String &s) {
-  throw std::invalid_argument("not a number");
+  String msg = "not a number: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failNotABrace(const String &s) {
-  throw std::invalid_argument("not a brace");
+  String msg = "not a brace: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failNotAConstant(const String &s) {
-  throw std::invalid_argument("not a constant");
+  String msg = "not a constant: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failNotAnUnaryOperator(const String &s) {
-  throw std::invalid_argument("not an unary operator");
+  String msg = "not an unary operator: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failNotABinaryOperator(const String &s) {
-  throw std::invalid_argument("not a binary operator");
+  String msg = "not a binary operator: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failWrongAssociativity(const String &s) {
-  throw std::invalid_argument("unknown associativity");
+  failNotABinaryOperator(s);
 }
 
 void Expression::failWrongBraceType(const String &s) {
-  throw std::invalid_argument("wrong brace type");
+  String msg = "wrong brace type: ";
+  throw std::invalid_argument((msg + s).data());
 }
 
 void Expression::failMissingLeftBrace() {
