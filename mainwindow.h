@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QLineEdit>
+#include <QLabel>
+#include <QPushButton>
 
 class MainWindow : public QMainWindow
 {
@@ -9,7 +12,20 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+
+public slots:
+    void inputChanged(const QString &);
+    void calculate();
+
+private:
+    QWidget* mCentralWidget;
+    QFont mainFont;
+    QLineEdit *inputExpressionEdit, *inversedNotationField, *answerField;
+    QString inversedNotation, answer;
+    QPushButton* calcButton;
+    QWidget* varWindow;
+
+    void enterVariables();
 };
 
 #endif // MAINWINDOW_H
