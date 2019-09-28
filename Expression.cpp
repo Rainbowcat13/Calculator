@@ -8,17 +8,18 @@ Expression::Expression(Queue<String> q) {
   s.push(String("("));
   q.push(String(")"));
   bool possibleNegation = true, requireFnBraces = false;
+  String v;
   while (!q.isEmpty()) {
     if (s.isEmpty())
       failMissingLeftBrace();
-    String v = q.pop();
+    v = q.pop();
     if (v == "-" && possibleNegation)
       v = "~";
     if (isNumber(v) || isConstant(v)) {
       postfix.push(v);
       possibleNegation = false;
     } else if (isVariable(v)) {
-      variables[v] = 0;
+      variables[v] = Number();
       postfix.push(v);
       possibleNegation = false;
     } else if (isUnaryOperator(v)) {
@@ -71,13 +72,15 @@ Expression::Expression(Queue<String> q) {
 
 Expression::Expression(const Expression &e) { postfix = e.postfix; }
 
-Expression::ResultType Expression::evaluate() const {
+Number Expression::evaluate() const {
   if (postfix.isEmpty())
-    return 0;
+    return Number(0);
   Queue<String> q = postfix;
-  Stack<ResultType> s;
+  Stack<Number> s;
+  String v;
+  Number a, b;
   while (!q.isEmpty()) {
-    String v = q.pop();
+    v = q.pop();
     if (isNumber(v)) {
       s.push(parseNumber(v));
     } else if (isConstant(v)) {
@@ -87,37 +90,33 @@ Expression::ResultType Expression::evaluate() const {
     } else if (isBinaryOperator(v) || isBinaryFunction(v)) {
       if (s.isEmpty())
         failMissingOperand();
-      ResultType b = s.pop();
+      b = s.pop();
       if (s.isEmpty())
         failMissingOperand();
-      ResultType a = s.pop();
+      a = s.pop();
       s.push(doBinaryOperation(v, a, b));
     } else if (isUnaryOperator(v) || isUnaryFunction(v)) {
       if (s.isEmpty())
         failMissingOperand();
-      ResultType a = s.pop();
+      a = s.pop();
       s.push(doUnaryOperation(v, a));
     } else {
       failWrongToken(v);
     }
   }
-  ResultType res = s.pop();
+  a = s.pop();
   if (!s.isEmpty())
     failMissingOperator();
-  return res;
+  return a;
 }
 
 Queue<String> Expression::getPostfix() const { return postfix; }
 
 List<String> Expression::getVariablesNames() const { return variables.keys(); }
 
-Expression::ResultType Expression::getVariable(String &s) const {
-  return variables[s];
-}
+Number Expression::getVariable(String &s) const { return variables[s]; }
 
-void Expression::setVariable(String &s, Expression::ResultType value) {
-  variables[s] = value;
-}
+void Expression::setVariable(String &s, Number value) { variables[s] = value; }
 
 bool Expression::isNumber(const String &s) {
   if (s.isEmpty())
@@ -217,17 +216,16 @@ Expression::Associativity Expression::associativity(const String &s) {
   return Associativity_Unknown;
 }
 
-Expression::ResultType Expression::getConstant(const String &s) {
+Number Expression::getConstant(const String &s) {
   if (s == "e")
-    return Math::Euler;
+    return Math::euler();
   if (s == "pi" || s == "π")
-    return Math::Pi;
+    return Math::pi();
   failNotAConstant(s);
-  return Expression::ResultType();
+  return Number();
 }
 
-Expression::ResultType Expression::doUnaryOperation(const String &s,
-                                                    Expression::ResultType a) {
+Number Expression::doUnaryOperation(const String &s, Number a) {
   if (s == "~")
     return -a;
   if (s == "sin")
@@ -243,12 +241,10 @@ Expression::ResultType Expression::doUnaryOperation(const String &s,
   if (s == "cbrt")
     return Math::cbrt(a);
   failNotAnUnaryOperator(s);
-  return Expression::ResultType();
+  return Number();
 }
 
-Expression::ResultType Expression::doBinaryOperation(const String &s,
-                                                     Expression::ResultType a,
-                                                     Expression::ResultType b) {
+Number Expression::doBinaryOperation(const String &s, Number a, Number b) {
   if (s == "+")
     return a + b;
   if (s == "-")
@@ -266,16 +262,16 @@ Expression::ResultType Expression::doBinaryOperation(const String &s,
   if (s == "max")
     return Math::max(a, b);
   failNotABinaryOperator(s);
-  return Expression::ResultType();
+  return Number();
 }
 
-Expression::ResultType Expression::parseNumber(const String &s) {
+Number Expression::parseNumber(const String &s) {
   if (s.isEmpty())
     failNotANumber(s);
   bool numSign = true, expSign = true;
   int n = s.length(), numSignPos = -1, fracEndPos = -1, dotPos = -1,
       expPos = -1;
-  long long num = 0, exp = 0, mul = 1;
+  Number::Integral num = 0, exp = 0, mul = 1;
   for (int i = 0; i < n; i++) {
     if (s[i] == '.' && i != n - 1 && i > 0 && expPos == -1 && dotPos == -1 &&
         numSignPos != i - 1) {
@@ -316,9 +312,9 @@ Expression::ResultType Expression::parseNumber(const String &s) {
   while (exp--)
     mul += mul << 2;
   if (expSign)
-    return static_cast<ResultType>(num) * mul;
+    return Number(num * mul);
   else
-    return static_cast<ResultType>(num) / mul;
+    return Number(static_cast<Number::FloatingPoint>(num) / mul);
 }
 
 void Expression::failWrongToken(const String &s) {

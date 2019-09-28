@@ -3,12 +3,12 @@
 
 #include "HashMap.h"
 #include "List.h"
+#include "Number.h"
 #include "Queue.h"
 #include "String.h"
 
 class Expression {
 public:
-  using ResultType = double;
   enum BraceType { BraceType_Round, BraceType_Square, BraceType_Unknown };
   enum Associativity {
     Associativity_Left,
@@ -17,11 +17,11 @@ public:
   };
   explicit Expression(Queue<String>);
   Expression(const Expression &);
-  ResultType evaluate() const;
+  Number evaluate() const;
   Queue<String> getPostfix() const;
   List<String> getVariablesNames() const;
-  ResultType getVariable(String &) const;
-  void setVariable(String &, ResultType);
+  Number getVariable(String &) const;
+  void setVariable(String &, Number);
   static bool isNumber(const String &);
   static bool isOperator(const String &);
   static bool isUnaryOperator(const String &);
@@ -37,14 +37,14 @@ public:
   static int precedence(const String &);
   static BraceType braceType(const String &);
   static Associativity associativity(const String &);
-  static ResultType getConstant(const String &);
-  static ResultType doUnaryOperation(const String &, ResultType);
-  static ResultType doBinaryOperation(const String &, ResultType, ResultType);
-  static ResultType parseNumber(const String &);
+  static Number getConstant(const String &);
+  static Number doUnaryOperation(const String &, Number);
+  static Number doBinaryOperation(const String &, Number, Number);
+  static Number parseNumber(const String &);
 
 private:
   Queue<String> postfix;
-  HashMap<String, ResultType> variables;
+  HashMap<String, Number> variables;
   static void failWrongToken(const String &);
   static void failNotANumber(const String &);
   static void failNotAConstant(const String &);
