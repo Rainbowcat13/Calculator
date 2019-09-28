@@ -51,6 +51,7 @@ private:
     FloatingPoint f;
   };
   enum { Type_Integral, Type_FloatingPoint } type;
+  void checkIntegral();
 };
 
 template <typename T> Number::Number(const T &n) { *this = n; }
@@ -73,6 +74,7 @@ template <typename T> Number &Number::operator=(const T &n) {
     type = Type_Integral;
     i = static_cast<Integral>(n);
   }
+  checkIntegral();
   return *this;
 }
 
@@ -86,6 +88,7 @@ template <typename T> Number &Number::operator+=(const T &n) {
   } else {
     i += static_cast<Integral>(n);
   }
+  checkIntegral();
   return *this;
 }
 
@@ -99,6 +102,7 @@ template <typename T> Number &Number::operator-=(const T &n) {
   } else {
     i -= static_cast<Integral>(n);
   }
+  checkIntegral();
   return *this;
 }
 
@@ -112,6 +116,7 @@ template <typename T> Number &Number::operator*=(const T &n) {
   } else {
     i *= static_cast<Integral>(n);
   }
+  checkIntegral();
   return *this;
 }
 
@@ -127,6 +132,7 @@ template <typename T> Number &Number::operator/=(const T &n) {
   } else {
     i /= static_cast<Integral>(n);
   }
+  checkIntegral();
   return *this;
 }
 

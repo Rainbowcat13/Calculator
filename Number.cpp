@@ -9,13 +9,11 @@ bool Number::isIntegral() const { return type == Type_Integral; }
 bool Number::isFloatingPoint() const { return type == Type_FloatingPoint; }
 
 Number &Number::operator=(const Number &n) {
-  type = n.type;
   if (n.type == Type_FloatingPoint) {
-    f = n.f;
+    return *this = n.f;
   } else {
-    i = n.i;
+    return *this = n.i;
   }
-  return *this;
 }
 
 Number &Number::operator+=(const Number &n) {
@@ -111,5 +109,14 @@ bool Number::operator>=(const Number &n) const {
     return *this >= n.f;
   } else {
     return *this >= n.i;
+  }
+}
+
+void Number::checkIntegral() {
+  if (isIntegral()) {
+    return;
+  } else if (static_cast<Integral>(f) == f) {
+    type = Type_Integral;
+    i = static_cast<Integral>(f);
   }
 }
