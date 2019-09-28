@@ -46,14 +46,14 @@ Number Math::log(const Number &a) {
   if (a <= 0)
     throw std::invalid_argument("logarithm of negative number");
   // TODO: implement logarithm
-  return Number(0.0);
+  throw std::logic_error("natural logarithm is not implemented");
 }
 
 Number Math::log2(const Number &a) {
   if (a <= 0)
     throw std::invalid_argument("logarithm of negative number");
   // TODO: implement logarithm
-  return Number(0.0);
+  throw std::logic_error("binary logarithm is not implemented");
 }
 
 Number Math::pow(const Number &a, const Number &b) {
@@ -102,7 +102,7 @@ Number Math::exp(const Number &a) {
 
 Number Math::exp2(const Number &a) {
   // TODO: implement exponentiation
-  return Number(0.0);
+  throw std::logic_error("binary exponentiation is not implemented");
 }
 
 Number Math::abs(const Number &a) { return a >= 0 ? +a : -a; }
