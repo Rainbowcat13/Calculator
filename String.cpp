@@ -40,17 +40,11 @@ std::size_t String::capacity() const { return cap; }
 
 bool String::isEmpty() const { return size == 0; }
 
-String String::operator+(char c) {
-  return String(*this) += c;
-}
+String String::operator+(char c) { return String(*this) += c; }
 
-String String::operator+(const char *s) {
-  return String(*this) += s;
-}
+String String::operator+(const char *s) { return String(*this) += s; }
 
-String String::operator+(const String &s) {
-  return String(*this) += s;
-}
+String String::operator+(const String &s) { return String(*this) += s; }
 
 String &String::operator+=(char c) {
   reserve(size + 1);
@@ -110,12 +104,14 @@ bool String::operator==(const String &s) const {
 }
 
 const char &String::operator[](std::size_t i) const {
-  if (i > size) throw std::out_of_range("invalid index");
+  if (i > size)
+    throw std::out_of_range("invalid index");
   return ptr[i];
 }
 
 char &String::operator[](std::size_t i) {
-  if (i > size) throw std::out_of_range("invalid index");
+  if (i > size)
+    throw std::out_of_range("invalid index");
   return ptr[i];
 }
 
