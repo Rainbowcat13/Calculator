@@ -48,7 +48,9 @@ std::string Tokenizer::getNextToken() {
     return getBrace();
   if (isOperator(s[pos]))
     return getOperator();
-  throw std::invalid_argument("unexpected " + s[pos]);
+  if (s[pos] == ',')
+    return s.substr(pos++, 1);
+  throw std::invalid_argument(std::string("unexpected ") + s[pos]);
 }
 
 std::string Tokenizer::getNumber() {
