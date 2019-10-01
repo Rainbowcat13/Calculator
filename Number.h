@@ -3,11 +3,14 @@
 
 #include <stdexcept>
 #include <type_traits>
+#include <string>
 
 class Number {
 public:
   using FloatingPoint = double;
   using Integral = long long;
+  static bool isNumber(const std::string &);
+  static Number parseNumber(const std::string &);
   Number();
   Number(const Number &);
   bool isIntegral() const;
