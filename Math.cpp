@@ -39,14 +39,29 @@ Number Math::log(const Number &a, const Number &b) {
     throw std::invalid_argument("logarithm with base = 1");
   if (b <= 0)
     throw std::invalid_argument("logarithm of negative number");
-  return log2(b) / log2(a);
+  // TODO: use log2 and exp2 instead
+  return log(b) / log(a);
 }
 
 Number Math::log(const Number &a) {
   if (a <= 0)
     throw std::invalid_argument("logarithm of negative number");
-  // TODO: implement logarithm
-  throw std::logic_error("natural logarithm is not implemented");
+  // TODO: reimplement logarithm
+  struct {
+    Number::FloatingPoint operator()(Number::FloatingPoint n) {
+      Number::FloatingPoint res = 1.0;
+      for (int i = 13; i > 0; i--)
+        res = 1.0 + n * res / i;
+      return res;
+    }
+  } e;
+  Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
+  Number::FloatingPoint x0 = n / 2, x = x0 - (e(x0) - n) / (e(x0));
+  while (x - x0 > 1e-9 || x - x0 < -1e-9) {
+    x0 = x;
+    x = x0 - (e(x0) - n) / (e(x0));
+  }
+  return Number(x);
 }
 
 Number Math::log2(const Number &a) {
@@ -66,7 +81,8 @@ Number Math::pow(const Number &a, const Number &b) {
   } else if (b.isFloatingPoint()) {
     if (a <= 0)
       throw std::invalid_argument("floating-point power with negative base");
-    return exp2(log2(a) * b);
+    // TODO: use exp2 and log2 instead
+    return exp(log(a) * b);
   } else if (a.isFloatingPoint()) {
     Number::Integral p = static_cast<Number::Integral>(b);
     Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
