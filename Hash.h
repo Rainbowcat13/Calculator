@@ -8,10 +8,9 @@ public:
   unsigned long operator()(const T &) const;
 };
 
-template<>
-class Hash<std::string> {
-  public:
-    unsigned long operator()(const std::string &s) const;
+template <> class Hash<std::string> {
+public:
+  unsigned long operator()(const std::string &s) const;
 };
 
 template <typename T> unsigned long Hash<T>::operator()(const T &t) const {

@@ -112,11 +112,15 @@ Number Expression::evaluate() const {
 
 Queue<std::string> Expression::getPostfix() const { return postfix; }
 
-List<std::string> Expression::getVariablesNames() const { return variables.keys(); }
+List<std::string> Expression::getVariablesNames() const {
+  return variables.keys();
+}
 
 Number Expression::getVariable(std::string &s) const { return variables[s]; }
 
-void Expression::setVariable(std::string &s, Number value) { variables[s] = value; }
+void Expression::setVariable(std::string &s, Number value) {
+  variables[s] = value;
+}
 
 bool Expression::isOperator(const std::string &s) {
   return isUnaryOperator(s) || isBinaryOperator(s);
@@ -145,9 +149,13 @@ bool Expression::isConstant(const std::string &s) {
   return s == "e" || s == "pi" || s == "π";
 }
 
-bool Expression::isLeftBrace(const std::string &s) { return s == "(" || s == "["; }
+bool Expression::isLeftBrace(const std::string &s) {
+  return s == "(" || s == "[";
+}
 
-bool Expression::isRightBrace(const std::string &s) { return s == ")" || s == "]"; }
+bool Expression::isRightBrace(const std::string &s) {
+  return s == ")" || s == "]";
+}
 
 bool Expression::isComma(const std::string &s) { return s == ","; }
 

@@ -2,8 +2,8 @@
 #define NUMBER_H
 
 #include <stdexcept>
-#include <type_traits>
 #include <string>
+#include <type_traits>
 
 class Number {
 public:

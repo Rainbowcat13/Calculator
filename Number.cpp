@@ -1,4 +1,5 @@
 #include "Number.h"
+#include <stdexcept>
 
 bool Number::isNumber(const std::string &s) {
   if (s.empty())

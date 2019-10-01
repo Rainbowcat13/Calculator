@@ -2,6 +2,7 @@
 #define STACK_H
 
 #include "ListNode.h"
+#include <stdexcept>
 
 template <typename T> class Stack {
 public:

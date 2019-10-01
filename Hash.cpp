@@ -9,4 +9,3 @@ unsigned long Hash<std::string>::operator()(const std::string &s) const {
   }
   return hashValue;
 }
-
