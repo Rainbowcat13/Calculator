@@ -5,6 +5,7 @@ Number Math::pi() { return Number(3.14159265358979323846); }
 Number Math::euler() { return Number(2.71828182845904523536); }
 
 Number Math::sin(const Number &a) {
+  if (a < 0) return -sin(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint p = n, f = 1, r = n, d = 1;
   char s = 1;
@@ -19,6 +20,7 @@ Number Math::sin(const Number &a) {
 }
 
 Number Math::cos(const Number &a) {
+  if (a < 0) return cos(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint p = 1, f = 1, r = 1, d = 1;
   char s = 1;
