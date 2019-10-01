@@ -13,6 +13,7 @@ public:
   static Number parseNumber(const std::string &);
   Number();
   Number(const Number &);
+  bool isInvalid() const;
   bool isIntegral() const;
   bool isFloatingPoint() const;
   Number &operator=(const Number &);
@@ -53,15 +54,20 @@ private:
     Integral i;
     FloatingPoint f;
   };
-  enum { Type_Integral, Type_FloatingPoint } type;
+  enum { Type_Integral, Type_FloatingPoint, Type_Invalid } type;
   void checkIntegral();
+  void makeIntegral();
+  void makeFloatingPoint();
+  void makeInvalid();
 };
 
 template <typename T> Number::Number(const T &n) { *this = n; }
 
 template <typename T> Number::operator T() const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    throw std::logic_error("accesing number that has no value assigned");
+  } else if (isFloatingPoint()) {
     return static_cast<T>(f);
   } else {
     return static_cast<T>(i);
@@ -83,7 +89,9 @@ template <typename T> Number &Number::operator=(const T &n) {
 
 template <typename T> Number &Number::operator+=(const T &n) {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return *this;
+  } else if (isFloatingPoint()) {
     f += static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     type = Type_FloatingPoint;
@@ -97,7 +105,9 @@ template <typename T> Number &Number::operator+=(const T &n) {
 
 template <typename T> Number &Number::operator-=(const T &n) {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return *this;
+  } else if (isFloatingPoint()) {
     f -= static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     type = Type_FloatingPoint;
@@ -111,7 +121,9 @@ template <typename T> Number &Number::operator-=(const T &n) {
 
 template <typename T> Number &Number::operator*=(const T &n) {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return *this;
+  } else if (isFloatingPoint()) {
     f *= static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     type = Type_FloatingPoint;
@@ -127,6 +139,8 @@ template <typename T> Number &Number::operator/=(const T &n) {
   static_assert(std::is_arithmetic<T>::value);
   if (n == 0) {
     throw std::invalid_argument("division by zero");
+  } else if (isInvalid()) {
+    return *this;
   } else if (isFloatingPoint()) {
     f /= static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
@@ -157,7 +171,9 @@ template <typename T> Number Number::operator/(const T &n) const {
 
 template <typename T> bool Number::operator==(const T &n) const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return false;
+  } else if (isFloatingPoint()) {
     return f == static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     return static_cast<FloatingPoint>(i) == static_cast<FloatingPoint>(n);
@@ -168,7 +184,9 @@ template <typename T> bool Number::operator==(const T &n) const {
 
 template <typename T> bool Number::operator<(const T &n) const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return false;
+  } else if (isFloatingPoint()) {
     return f < static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     return static_cast<FloatingPoint>(i) < static_cast<FloatingPoint>(n);
@@ -179,7 +197,9 @@ template <typename T> bool Number::operator<(const T &n) const {
 
 template <typename T> bool Number::operator>(const T &n) const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return false;
+  } else if (isFloatingPoint()) {
     return f > static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     return static_cast<FloatingPoint>(i) > static_cast<FloatingPoint>(n);
@@ -190,7 +210,9 @@ template <typename T> bool Number::operator>(const T &n) const {
 
 template <typename T> bool Number::operator<=(const T &n) const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return false;
+  } else if (isFloatingPoint()) {
     return f <= static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     return static_cast<FloatingPoint>(i) <= static_cast<FloatingPoint>(n);
@@ -201,7 +223,9 @@ template <typename T> bool Number::operator<=(const T &n) const {
 
 template <typename T> bool Number::operator>=(const T &n) const {
   static_assert(std::is_arithmetic<T>::value);
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return false;
+  } else if (isFloatingPoint()) {
     return f >= static_cast<FloatingPoint>(n);
   } else if (std::is_floating_point<T>::value) {
     return static_cast<FloatingPoint>(i) >= static_cast<FloatingPoint>(n);

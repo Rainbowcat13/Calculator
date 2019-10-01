@@ -78,16 +78,21 @@ Number Number::parseNumber(const std::string &s) {
     return Number(static_cast<FloatingPoint>(num) / mul);
 }
 
-Number::Number() : Number(0) {}
+Number::Number() { makeInvalid(); }
 
 Number::Number(const Number &n) { *this = n; }
+
+bool Number::isInvalid() const { return type == Type_Invalid; }
 
 bool Number::isIntegral() const { return type == Type_Integral; }
 
 bool Number::isFloatingPoint() const { return type == Type_FloatingPoint; }
 
 Number &Number::operator=(const Number &n) {
-  if (n.type == Type_FloatingPoint) {
+  if (n.isInvalid()) {
+    makeInvalid();
+    return *this;
+  } else if (n.isFloatingPoint()) {
     return *this = n.f;
   } else {
     return *this = n.i;
@@ -95,7 +100,10 @@ Number &Number::operator=(const Number &n) {
 }
 
 Number &Number::operator+=(const Number &n) {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    makeInvalid();
+    return *this;
+  } else if (n.isFloatingPoint()) {
     return *this += n.f;
   } else {
     return *this += n.i;
@@ -103,7 +111,10 @@ Number &Number::operator+=(const Number &n) {
 }
 
 Number &Number::operator-=(const Number &n) {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    makeInvalid();
+    return *this;
+  } else if (n.isFloatingPoint()) {
     return *this -= n.f;
   } else {
     return *this -= n.i;
@@ -111,7 +122,10 @@ Number &Number::operator-=(const Number &n) {
 }
 
 Number &Number::operator*=(const Number &n) {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    makeInvalid();
+    return *this;
+  } else if (n.isFloatingPoint()) {
     return *this *= n.f;
   } else {
     return *this *= n.i;
@@ -119,7 +133,10 @@ Number &Number::operator*=(const Number &n) {
 }
 
 Number &Number::operator/=(const Number &n) {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    makeInvalid();
+    return *this;
+  } else if (n.isFloatingPoint()) {
     return *this /= n.f;
   } else {
     return *this /= n.i;
@@ -127,6 +144,9 @@ Number &Number::operator/=(const Number &n) {
 }
 
 Number Number::operator+() const {
+  if (isInvalid()) {
+    return Number();
+  }
   if (isFloatingPoint()) {
     return Number(+f);
   } else {
@@ -137,7 +157,9 @@ Number Number::operator+() const {
 Number Number::operator+(const Number &n) const { return Number(*this) += n; }
 
 Number Number::operator-() const {
-  if (isFloatingPoint()) {
+  if (isInvalid()) {
+    return Number();
+  } else if (isFloatingPoint()) {
     return Number(-f);
   } else {
     return Number(-i);
@@ -151,7 +173,9 @@ Number Number::operator*(const Number &n) const { return Number(*this) *= n; }
 Number Number::operator/(const Number &n) const { return Number(*this) /= n; }
 
 bool Number::operator==(const Number &n) const {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    return false;
+  } else if (n.isFloatingPoint()) {
     return *this == n.f;
   } else {
     return *this == n.i;
@@ -159,7 +183,9 @@ bool Number::operator==(const Number &n) const {
 }
 
 bool Number::operator<(const Number &n) const {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    return false;
+  } else if (n.isFloatingPoint()) {
     return *this < n.f;
   } else {
     return *this < n.i;
@@ -167,7 +193,9 @@ bool Number::operator<(const Number &n) const {
 }
 
 bool Number::operator>(const Number &n) const {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    return false;
+  } else if (n.isFloatingPoint()) {
     return *this > n.f;
   } else {
     return *this > n.i;
@@ -175,7 +203,9 @@ bool Number::operator>(const Number &n) const {
 }
 
 bool Number::operator<=(const Number &n) const {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    return false;
+  } else if (n.isFloatingPoint()) {
     return *this <= n.f;
   } else {
     return *this <= n.i;
@@ -183,7 +213,9 @@ bool Number::operator<=(const Number &n) const {
 }
 
 bool Number::operator>=(const Number &n) const {
-  if (n.isFloatingPoint()) {
+  if (n.isInvalid()) {
+    return false;
+  } else if (n.isFloatingPoint()) {
     return *this >= n.f;
   } else {
     return *this >= n.i;
@@ -191,10 +223,16 @@ bool Number::operator>=(const Number &n) const {
 }
 
 void Number::checkIntegral() {
-  if (isIntegral()) {
-    return;
-  } else if (static_cast<Integral>(f) == f) {
-    type = Type_Integral;
-    i = static_cast<Integral>(f);
+  if (isFloatingPoint() && static_cast<Integral>(f) == f) {
+    makeIntegral();
   }
 }
+
+void Number::makeInvalid() {
+  i = 0;
+  type = Type_Invalid;
+}
+
+void Number::makeIntegral() { *this = static_cast<Integral>(*this); }
+
+void Number::makeFloatingPoint() { *this = static_cast<FloatingPoint>(*this); }
