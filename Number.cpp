@@ -1,57 +1,55 @@
 #include "Number.h"
 #include <stdexcept>
 
+bool Number::isDot(char c) { return c == '.'; }
+
+bool Number::isDigit(char c) { return c >= '0' && c <= '9'; }
+
+bool Number::isSign(char c) { return c == '+' || c == '-'; }
+
+bool Number::isExp(char c) { return c == 'e' || c == 'E'; }
+
 bool Number::isNumber(const std::string &s) {
-  if (s.empty())
-    return false;
-  int n = s.length(), numSignPos = -1, dotPos = -1, expPos = -1;
-  for (int i = 0; i < n; i++) {
-    if (s[i] == '.' && i != n - 1 && i > 0 && expPos == -1 && dotPos == -1 &&
-        numSignPos != i - 1) {
-      dotPos = i;
-    } else if (s[i] == 'e' && i != n - 1 && i > 0 && expPos == -1 &&
-               dotPos != i - 1 && numSignPos != i - 1) {
-      expPos = i;
-    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i == 0) {
-      numSignPos = i;
-    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i > 0 &&
-               expPos == i - 1) {
+  int n = s.length(), sn = -1, d = -1, se = -1, e = -1;
+  for (int i = 0; i < n; i++)
+    if (isDot(s[i]) && i > 0 && e < 0 && d < 0 && sn != i - 1)
+      d = i;
+    else if (isExp(s[i]) && i > 0 && e < 0 && d != i - 1 && sn != i - 1)
+      e = i;
+    else if (isSign(s[i]) && i == 0)
+      sn = i;
+    else if (isSign(s[i]) && i == e + 1)
+      se = i;
+    else if (isDigit(s[i]))
       continue;
-    } else if (s[i] >= '0' && s[i] <= '9') {
-      continue;
-    } else {
+    else
       return false;
-    }
-  }
-  return true;
+  return d != n - 1 && e != n - 1 && sn != n - 1 && se != n - 1;
 }
 
 Number Number::parseNumber(const std::string &s) {
   if (s.empty())
     throw std::invalid_argument("not a number: " + s);
-  bool numSign = true, expSign = true;
-  int n = s.length(), numSignPos = -1, fracEndPos = -1, dotPos = -1,
-      expPos = -1;
-  Number::Integral num = 0, exp = 0, mul = 1;
+  bool nums = true, exps = true;
+  int n = s.length(), sn = -1, d = -1, se = -1, e = -1, fe = -1;
+  Integral num = 0, exp = 0, mul = 1;
   for (int i = 0; i < n; i++) {
-    if (s[i] == '.' && i != n - 1 && i > 0 && expPos == -1 && dotPos == -1 &&
-        numSignPos != i - 1) {
-      dotPos = i;
-    } else if (s[i] == 'e' && i != n - 1 && i > 0 && expPos == -1 &&
-               dotPos != i - 1 && numSignPos != i - 1) {
-      expPos = i;
-    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i == 0) {
-      numSignPos = i;
-      numSign = (s[i] == '+');
-    } else if ((s[i] == '-' || s[i] == '+') && i != n - 1 && i > 0 &&
-               expPos == i - 1) {
-      expSign = (s[i] == '+');
-    } else if (s[i] >= '0' && s[i] <= '9') {
-      if (expPos != -1 && i > expPos) {
+    if (isDot(s[i]) && i > 0 && e < 0 && d < 0 && sn != i - 1) {
+      d = i;
+    } else if (isExp(s[i]) && i > 0 && e < 0 && d != i - 1 && sn != i - 1) {
+      e = i;
+    } else if (isSign(s[i]) && i == 0) {
+      sn = i;
+      nums = (s[i] == '+');
+    } else if (isSign(s[i]) && i == e + 1) {
+      se = i;
+      exps = (s[i] == '+');
+    } else if (isDigit(s[i])) {
+      if (e > 0 && i > e) {
         exp = exp * 10 + s[i] - '0';
-      } else if (dotPos != -1 && i > dotPos) {
+      } else if (d > 0 && i > d) {
         num = num * 10 + s[i] - '0';
-        fracEndPos = i;
+        fe = i;
       } else {
         num = num * 10 + s[i] - '0';
       }
@@ -59,20 +57,22 @@ Number Number::parseNumber(const std::string &s) {
       throw std::invalid_argument("not a number: " + s);
     }
   }
-  if (!numSign)
+  if (sn == n - 1 || d == n - 1 || se == n - 1 || e == n - 1)
+    throw std::invalid_argument("not a number: " + s);
+  if (!nums)
     num = -num;
-  if (expSign)
-    exp -= fracEndPos - dotPos;
+  if (exps)
+    exp -= fe - d;
   else
-    exp += fracEndPos - dotPos;
+    exp += fe - d;
   if (exp < 0) {
     exp = -exp;
-    expSign = !expSign;
+    exps = !exp;
   }
   mul <<= exp;
   while (exp--)
     mul += mul << 2;
-  if (expSign)
+  if (exps)
     return Number(num * mul);
   else
     return Number(static_cast<FloatingPoint>(num) / mul);
@@ -223,9 +223,11 @@ bool Number::operator>=(const Number &n) const {
 }
 
 void Number::checkIntegral() {
-  if (isFloatingPoint() && static_cast<Integral>(f) == f) {
+  struct {
+    FloatingPoint operator()(FloatingPoint a) { return a >= 0 ? a : -a; }
+  } abs;
+  if (isFloatingPoint() && abs(f - static_cast<Integral>(f)) < Eps)
     makeIntegral();
-  }
 }
 
 void Number::makeInvalid() {
