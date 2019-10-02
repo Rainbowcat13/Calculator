@@ -382,28 +382,30 @@ Expression::Expression(Queue<std::string> q) {
   Stack<std::string> s;
   s.push(std::string("("));
   q.push(std::string(")"));
-  bool possibleNegation = true, requireFnBraces = false;
+  bool unary = true, fnBraces = false;
   std::string v;
   while (!q.isEmpty()) {
     if (s.isEmpty())
       failMissingLeftBrace();
     v = q.pop();
-    if (v == "-" && possibleNegation)
-      v = "~";
+    if (v == "+" && unary)
+      v = "++";
+    if (v == "-" && unary)
+      v = "--";
     if (Number::isNumber(v) || isConstant(v)) {
       postfix.push(v);
-      possibleNegation = false;
+      unary = false;
     } else if (isVariable(v)) {
       variables[v] = Number();
       postfix.push(v);
-      possibleNegation = false;
+      unary = false;
     } else if (isUnaryOperator(v)) {
       s.push(v);
-      possibleNegation = false;
+      unary = false;
     } else if (isFunction(v)) {
       s.push(v);
-      possibleNegation = false;
-      requireFnBraces = true;
+      unary = false;
+      fnBraces = true;
     } else if (isBinaryOperator(v)) {
       if (getAssocType(v) == AssocType_Right) {
         while (getPrecedence(v) < getPrecedence(s.top())) {
@@ -417,13 +419,13 @@ Expression::Expression(Queue<std::string> q) {
         failWrongAssociativity(v);
       }
       s.push(v);
-      possibleNegation = true;
+      unary = true;
     } else if (isLeftBrace(v)) {
-      if (requireFnBraces && getBraceType(v) != BraceType_Round)
+      if (fnBraces && getBraceType(v) != BraceType_Round)
         failWrongBraceType(v);
       s.push(v);
-      possibleNegation = true;
-      requireFnBraces = false;
+      unary = true;
+      fnBraces = false;
     } else if (isRightBrace(v)) {
       while (!isLeftBrace(s.top())) {
         postfix.push(s.pop());
@@ -431,12 +433,12 @@ Expression::Expression(Queue<std::string> q) {
       if (getBraceType(v) != getBraceType(s.top()))
         failWrongBraceType(v);
       s.pop();
-      possibleNegation = false;
+      unary = false;
     } else if (isComma(v)) {
       while (!isLeftBrace(s.top())) {
         postfix.push(s.pop());
       }
-      possibleNegation = true;
+      unary = true;
     } else {
       failWrongToken(v);
     }
@@ -501,7 +503,9 @@ bool Expression::isOperator(const std::string &s) {
   return isUnaryOperator(s) || isBinaryOperator(s);
 }
 
-bool Expression::isUnaryOperator(const std::string &s) { return s == "~"; }
+bool Expression::isUnaryOperator(const std::string &s) {
+  return s == "++" || s == "--";
+}
 
 bool Expression::isBinaryOperator(const std::string &s) {
   return s == "+" || s == "-" || s == "*" || s == "/" || s == "^";
@@ -545,6 +549,8 @@ bool Expression::isVariable(const std::string &s) {
 }
 
 int Expression::getPrecedence(const std::string &s) {
+  if (s == "++" || s == "--")
+    return 4;
   if (isFunction(s) || isUnaryOperator(s))
     return 10;
   if (s == "+" || s == "-")
@@ -584,7 +590,9 @@ Number Expression::getConstant(const std::string &s) {
 }
 
 Number Expression::doUnaryOperation(const std::string &s, Number a) {
-  if (s == "~")
+  if (s == "++")
+    return +a;
+  if (s == "--")
     return -a;
   if (s == "sin")
     return Math::sin(a);
