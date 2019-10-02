@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <set>
+#include <QKeyEvent>
 
 class MainWindow : public QMainWindow
 {
@@ -14,21 +15,24 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     QVector<QString> getVariables();
+    void keyPressEvent(QKeyEvent* event);
 
 public slots:
     void calculate();
     void processInput();
 
+
 private:
     QWidget* mCentralWidget;
     QFont mainFont;
-    QLineEdit *inputExpressionEdit, *inversedNotationField, *answerField;
+    QLineEdit *inputExpressionEdit, *inversedNotationField, *answerField, *errorWindow;
     QString inversedNotation, answer;
     QPushButton* calcButton;
     QWidget* varWindow;
     std::set<QString> consts;
+    QVector<QString> variables;
+    QVector<QLineEdit*> varEdits;
 
-    void enterVariables();
 };
 
 #endif // MAINWINDOW_H

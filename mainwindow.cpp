@@ -7,6 +7,11 @@
 #include <QString>
 #include <QVector>
 #include "expression.h"
+#include "Tokenizer.h"
+#include "Number.h"
+#include <stdexcept>
+#include "Queue.h"
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -45,6 +50,14 @@ MainWindow::MainWindow(QWidget *parent)
     calcButton->setText("Calculate");
     connect(calcButton, SIGNAL(clicked()), this, SLOT(processInput()));
 
+    // Created window for errors
+    errorWindow = new QLineEdit;
+    errorWindow->setFont(mainFont);
+    errorWindow->setText("Everything is OK");
+    errorWindow->setStyleSheet("color: green");
+    errorWindow->setAlignment(Qt::AlignCenter);
+    errorWindow->setReadOnly(1);
+
     // Created field for answer
     answerField = new QLineEdit;
     answerField->setFont(mainFont);
@@ -54,21 +67,61 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Configured layout and added all widgets
     QGridLayout* mainLayout = new QGridLayout;
-    mainLayout->addWidget(inputExpressionEdit, 0, 0, 10, 10);
-    mainLayout->addWidget(inversedNotationField, 10, 0, 10, 10);
-    mainLayout->addWidget(calcButton, 0, 10, 10, 10);
-    mainLayout->addWidget(answerField, 10, 10, 10, 10);
+    mainLayout->addWidget(errorWindow, 0, 0, 5, 20);
+    mainLayout->addWidget(inputExpressionEdit, 5, 0, 10, 10);
+    mainLayout->addWidget(inversedNotationField, 15, 0, 10, 10);
+    mainLayout->addWidget(calcButton, 5, 10, 10, 10);
+    mainLayout->addWidget(answerField, 15, 10, 10, 10);
     mCentralWidget->setLayout(mainLayout);
     setCentralWidget(mCentralWidget);
 }
 
-void MainWindow::processInput() {
-    enterVariables();
-    calculate();
+void MainWindow::calculate() {
+    auto expressionString = inputExpressionEdit->text().toStdString();
+    Number preAnswer;
+    Tokenizer t = Tokenizer(expressionString);
+    Expression mainExpression = Expression({});
+    try {
+        auto tt = t.getAllTokens();
+        mainExpression = Expression(tt);
+        if (!variables.empty()) {
+            for (int i = 0; i < variables.size(); i++) {
+                auto var = variables[i].toStdString();
+                Number num = Number(Number::parseNumber(varEdits[i]->text().toStdString()));
+                mainExpression.setVariable(var, num);
+            }
+            varWindow->hide();
+        }
+        preAnswer = mainExpression.evaluate();
+    }
+    catch (std::invalid_argument s) {
+        errorWindow->setText(QString::fromStdString(s.what()));
+        errorWindow->setStyleSheet("color: red");
+        if (!variables.empty()) {
+            varWindow->hide();
+        }
+        return;
+    }
+    errorWindow->setText("Everything is OK");
+    errorWindow->setStyleSheet("color: green");
+    answer = QString::number(static_cast<double>(preAnswer));
+    answerField->setText(answer);
+
+    auto postfix = mainExpression.getPostfix();
+    QString in = "";
+    while (!postfix.isEmpty()) {
+        auto token = postfix.front();
+        postfix.pop();
+        in += QString::fromStdString(token) + " ";
+    }
+    inversedNotation = in;
+    inversedNotationField->setText(inversedNotation);
 }
 
-void MainWindow::calculate() {
-   // jopa
+void MainWindow::keyPressEvent(QKeyEvent *event){
+    if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+       processInput();
+    }
 }
 
 QVector<QString> MainWindow::getVariables() {
@@ -94,22 +147,23 @@ QVector<QString> MainWindow::getVariables() {
     return ans;
 }
 
-void MainWindow::enterVariables() {
+void MainWindow::processInput() {
     // Created new window for entering variables
     varWindow = new QWidget;
     varWindow->setFixedSize(500, 500);
     QGridLayout* varLayout = new QGridLayout;
-    QVector<QString> variables = getVariables();
+    variables = getVariables();
     if (variables.empty()) {
+        calculate();
         return;
     }
-    QVector<QLineEdit*> varEdits;
     int cnt = 0;
     for (auto s: variables) {
         QLabel* currentVariable = new QLabel;
         currentVariable->setText("Enter " + s + " :");
         currentVariable->setFont(mainFont);
         currentVariable->setAlignment(Qt::AlignLeft);
+
 
         QLineEdit* currentEdit = new QLineEdit;
         currentEdit->setFont(mainFont);
