@@ -102,6 +102,7 @@ double Math::reduce2Pi(double a) {
 }
 =======
 #include "Math.h"
+#include <cmath>
 
 Number Math::pi() { return Number(3.14159265358979323846); }
 
@@ -111,6 +112,7 @@ Number Math::sin(const Number &a) {
   if (a < 0)
     return -sin(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
+  n = std::fmod(n, static_cast<Number::FloatingPoint>(pi()) * 2);
   Number::FloatingPoint p = n, f = 1, r = n, d = 1;
   char s = 1;
   for (int i = 3; d > Number::Eps; i += 2) {
@@ -127,6 +129,7 @@ Number Math::cos(const Number &a) {
   if (a < 0)
     return cos(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
+  n = std::fmod(n, static_cast<Number::FloatingPoint>(pi()) * 2);
   Number::FloatingPoint p = 1, f = 1, r = 1, d = 1;
   char s = 1;
   for (int i = 2; d > Number::Eps; i += 2) {

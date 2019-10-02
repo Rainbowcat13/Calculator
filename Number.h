@@ -9,7 +9,7 @@ class Number {
 public:
   using FloatingPoint = double;
   using Integral = long long;
-  static const int Eps = 1e-9;
+  static const constexpr FloatingPoint Eps = 1e-9;
   static bool isNumber(const std::string &);
   static Number parseNumber(const std::string &);
   Number();
