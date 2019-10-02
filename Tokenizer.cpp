@@ -55,10 +55,20 @@ std::string Tokenizer::getNextToken() {
 
 std::string Tokenizer::getNumber() {
   std::size_t b = pos;
-  if (!isDigit(s[b]))
-    return "";
-  for (; isDigit(s[pos]) || s[pos] == '.' || s[pos] == 'e'; pos++) {
-  }
+  int n = s.length(), dot = -2, exp = -2;
+  while (pos < n)
+    if (s[pos] == '.' && pos > b && exp < 0 && dot < 0)
+      dot = pos++;
+    else if (s[pos] == 'e' && pos > b && exp < 0 && dot != pos - 1)
+      exp = pos++;
+    else if ((s[pos] == '-' || s[pos] == '+') && (exp == pos - 1 || b == pos))
+      pos++;
+    else if (s[pos] >= '0' && s[pos] <= '9')
+      pos++;
+    else
+      break;
+  if (dot == pos - 1 || exp == pos - 1)
+    throw std::invalid_argument(std::string("no digit after ") + s[pos - 1]);
   return s.substr(b, pos - b);
 }
 
