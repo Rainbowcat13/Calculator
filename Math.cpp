@@ -108,11 +108,12 @@ Number Math::pi() { return Number(3.14159265358979323846); }
 Number Math::euler() { return Number(2.71828182845904523536); }
 
 Number Math::sin(const Number &a) {
-  if (a < 0) return -sin(-a);
+  if (a < 0)
+    return -sin(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint p = n, f = 1, r = n, d = 1;
   char s = 1;
-  for (int i = 3; d > 1e-9; i += 2) {
+  for (int i = 3; d > Number::Eps; i += 2) {
     s = -s;
     p *= n * n;
     f *= (i - 1) * i;
@@ -123,11 +124,12 @@ Number Math::sin(const Number &a) {
 }
 
 Number Math::cos(const Number &a) {
-  if (a < 0) return cos(-a);
+  if (a < 0)
+    return cos(-a);
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint p = 1, f = 1, r = 1, d = 1;
   char s = 1;
-  for (int i = 2; d > 1e-9; i += 2) {
+  for (int i = 2; d > Number::Eps; i += 2) {
     s = -s;
     p *= n * n;
     f *= (i - 1) * i;
@@ -162,7 +164,7 @@ Number Math::log(const Number &a) {
   } e;
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint x0 = n / 2, x = x0 - (e(x0) - n) / (e(x0));
-  while (x - x0 > 1e-9 || x - x0 < -1e-9) {
+  while (x - x0 > Number::Eps || x - x0 < -Number::Eps) {
     x0 = x;
     x = x0 - (e(x0) - n) / (e(x0));
   }
@@ -233,7 +235,7 @@ Number Math::sqrt(const Number &a) {
     throw std::invalid_argument("square root of negative number");
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint x0 = n / 2, x = x0 - (x0 * x0 - n) / (2 * x0);
-  while (x - x0 > 1e-9 || x - x0 < -1e-9) {
+  while (x - x0 > Number::Eps || x - x0 < -Number::Eps) {
     x0 = x;
     x = x0 - (x0 * x0 - n) / (2 * x0);
   }
@@ -243,7 +245,7 @@ Number Math::sqrt(const Number &a) {
 Number Math::cbrt(const Number &a) {
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
   Number::FloatingPoint x0 = n / 3, x = x0 - (x0 * x0 * x0 - n) / (3 * x0 * x0);
-  while (x - x0 > 1e-9 || x - x0 < -1e-9) {
+  while (x - x0 > Number::Eps || x - x0 < -Number::Eps) {
     x0 = x;
     x = x0 - (x0 * x0 * x0 - n) / (3 * x0 * x0);
   }
