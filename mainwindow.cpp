@@ -11,6 +11,7 @@
 #include "Number.h"
 #include <stdexcept>
 #include "Queue.h"
+#include <string>
 #include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -104,7 +105,9 @@ void MainWindow::calculate() {
     }
     errorWindow->setText("Everything is OK");
     errorWindow->setStyleSheet("color: green");
-    answer = QString::number(static_cast<double>(preAnswer));
+
+    auto aaa = std::to_string(static_cast<double>(preAnswer));
+    answer = QString::fromStdString(aaa);
     answerField->setText(answer);
 
     auto postfix = mainExpression.getPostfix();
@@ -125,7 +128,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 }
 
 QVector<QString> MainWindow::getVariables() {
-    QVector<QString> ans;
+    std::set<QString> ans;
     int it = 0;
     auto s = inputExpressionEdit->text();
     int n = s.size();
@@ -141,10 +144,14 @@ QVector<QString> MainWindow::getVariables() {
         }
         else {
             if (consts.find(curs) == consts.end())
-                ans.push_back(curs);
+                ans.insert(curs);
         }
     }
-    return ans;
+    QVector<QString> aans;
+    for (auto elem: ans) {
+        aans.push_back(elem);
+    }
+    return aans;
 }
 
 void MainWindow::processInput() {

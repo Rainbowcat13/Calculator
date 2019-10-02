@@ -31,8 +31,7 @@ SOURCES += \
         expression.cpp \
         main.cpp \
         mainwindow.cpp \
-        math.cpp \
-        mystring.cpp
+        math.cpp
 
 HEADERS += \
         Hash.h \
