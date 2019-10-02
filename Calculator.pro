@@ -22,14 +22,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += \
+        expression.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        math.cpp \
+        mystring.cpp
 
 HEADERS += \
-        mainwindow.h
+        Hash.h \
+        HashMap.h \
+        List.h \
+        ListNode.h \
+        Pair.h \
+        Queue.h \
+        Stack.h \
+        expression.h \
+        mainwindow.h \
+        math.h \
+        mystring.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

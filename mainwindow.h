@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QPushButton>
+#include <set>
 
 class MainWindow : public QMainWindow
 {
@@ -12,10 +13,11 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = 0);
+    QVector<QString> getVariables();
 
 public slots:
-    void inputChanged(const QString &);
     void calculate();
+    void processInput();
 
 private:
     QWidget* mCentralWidget;
@@ -24,6 +26,7 @@ private:
     QString inversedNotation, answer;
     QPushButton* calcButton;
     QWidget* varWindow;
+    std::set<QString> consts;
 
     void enterVariables();
 };

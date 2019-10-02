@@ -1,17 +1,17 @@
-#include "Expression.h"
-#include "Math.h"
+#include "expression.h"
+#include "math.h"
 #include "Stack.h"
 #include <stdexcept>
 
-Expression::Expression(Queue<String> q) {
-  Stack<String> s;
-  s.push(String("("));
-  q.push(String(")"));
+Expression::Expression(Queue<MyString> q) {
+  Stack<MyString> s;
+  s.push(MyString("("));
+  q.push(MyString(")"));
   bool possibleNegation = true, requireFnBraces = false;
   while (!q.isEmpty()) {
     if (s.isEmpty())
       failMissingLeftBrace();
-    String v = q.pop();
+    MyString v = q.pop();
     if (v == "-" && possibleNegation)
       v = "~";
     if (isNumber(v) || isConstant(v)) {
@@ -74,10 +74,10 @@ Expression::Expression(const Expression &e) { postfix = e.postfix; }
 Expression::ResultType Expression::evaluate() const {
   if (postfix.isEmpty())
     return 0;
-  Queue<String> q = postfix;
+  Queue<MyString> q = postfix;
   Stack<ResultType> s;
   while (!q.isEmpty()) {
-    String v = q.pop();
+    MyString v = q.pop();
     if (isNumber(v)) {
       s.push(parseNumber(v));
     } else if (isConstant(v)) {
@@ -107,19 +107,19 @@ Expression::ResultType Expression::evaluate() const {
   return res;
 }
 
-Queue<String> Expression::getPostfix() const { return postfix; }
+Queue<MyString> Expression::getPostfix() const { return postfix; }
 
-List<String> Expression::getVariablesNames() const { return variables.keys(); }
+List<MyString> Expression::getVariablesNames() const { return variables.keys(); }
 
-Expression::ResultType Expression::getVariable(String &s) const {
+Expression::ResultType Expression::getVariable(MyString &s) const {
   return variables[s];
 }
 
-void Expression::setVariable(String &s, Expression::ResultType value) {
+void Expression::setVariable(MyString &s, Expression::ResultType value) {
   variables[s] = value;
 }
 
-bool Expression::isNumber(const String &s) {
+bool Expression::isNumber(const MyString &s) {
   bool dot = false, exp = false;
   for (std::size_t i = 0; i < s.length(); i++) {
     if (i > 0 && !exp && !dot && s[i] == '.') {
@@ -139,40 +139,40 @@ bool Expression::isNumber(const String &s) {
   return true;
 }
 
-bool Expression::isOperator(const String &s) {
+bool Expression::isOperator(const MyString &s) {
   return isUnaryOperator(s) || isBinaryOperator(s);
 }
 
-bool Expression::isUnaryOperator(const String &s) { return s == "~"; }
+bool Expression::isUnaryOperator(const MyString &s) { return s == "~"; }
 
-bool Expression::isBinaryOperator(const String &s) {
+bool Expression::isBinaryOperator(const MyString &s) {
   return s == "+" || s == "-" || s == "*" || s == "/" || s == "^";
 }
 
-bool Expression::isFunction(const String &s) {
+bool Expression::isFunction(const MyString &s) {
   return isUnaryFunction(s) || isBinaryFunction(s);
 }
 
-bool Expression::isUnaryFunction(const String &s) {
+bool Expression::isUnaryFunction(const MyString &s) {
   return s == "sin" || s == "cos" || s == "exp" || s == "abs" || s == "sqrt" ||
          s == "cbrt";
 }
 
-bool Expression::isBinaryFunction(const String &s) {
+bool Expression::isBinaryFunction(const MyString &s) {
   return s == "pow" || s == "log" || s == "min" || s == "max";
 }
 
-bool Expression::isConstant(const String &s) {
+bool Expression::isConstant(const MyString &s) {
   return s == "e" || s == "pi" || s == "π";
 }
 
-bool Expression::isLeftBrace(const String &s) { return s == "(" || s == "["; }
+bool Expression::isLeftBrace(const MyString &s) { return s == "(" || s == "["; }
 
-bool Expression::isRightBrace(const String &s) { return s == ")" || s == "]"; }
+bool Expression::isRightBrace(const MyString &s) { return s == ")" || s == "]"; }
 
-bool Expression::isComma(const String &s) { return s == ","; }
+bool Expression::isComma(const MyString &s) { return s == ","; }
 
-bool Expression::isVariable(const String &s) {
+bool Expression::isVariable(const MyString &s) {
   if (isFunction(s) || isConstant(s) || s[0] < 'a' || s[0] > 'z')
     return false;
   for (std::size_t i = 0; i < s.length(); i++) {
@@ -182,7 +182,7 @@ bool Expression::isVariable(const String &s) {
   return true;
 }
 
-int Expression::precedence(const String &s) {
+int Expression::precedence(const MyString &s) {
   if (isFunction(s) || isUnaryOperator(s))
     return 10;
   if (s == "+" || s == "-")
@@ -194,7 +194,7 @@ int Expression::precedence(const String &s) {
   return -1;
 }
 
-Expression::BraceType Expression::braceType(const String &s) {
+Expression::BraceType Expression::braceType(const MyString &s) {
   if (s == "(" || s == ")")
     return BraceType_Round;
   if (s == "[" || s == "]")
@@ -203,7 +203,7 @@ Expression::BraceType Expression::braceType(const String &s) {
   return BraceType_Unknown;
 }
 
-Expression::Associativity Expression::associativity(const String &s) {
+Expression::Associativity Expression::associativity(const MyString &s) {
   if (s == "+" || s == "-" || s == "*" || s == "/")
     return Associativity_Left;
   if (s == "^")
@@ -212,7 +212,7 @@ Expression::Associativity Expression::associativity(const String &s) {
   return Associativity_Unknown;
 }
 
-Expression::ResultType Expression::getConstant(const String &s) {
+Expression::ResultType Expression::getConstant(const MyString &s) {
   if (s == "e")
     return Math::Euler;
   if (s == "pi" || s == "π")
@@ -221,7 +221,7 @@ Expression::ResultType Expression::getConstant(const String &s) {
   return Expression::ResultType();
 }
 
-Expression::ResultType Expression::doUnaryOperation(const String &s,
+Expression::ResultType Expression::doUnaryOperation(const MyString &s,
                                                     Expression::ResultType a) {
   if (s == "~")
     return -a;
@@ -241,7 +241,7 @@ Expression::ResultType Expression::doUnaryOperation(const String &s,
   return Expression::ResultType();
 }
 
-Expression::ResultType Expression::doBinaryOperation(const String &s,
+Expression::ResultType Expression::doBinaryOperation(const MyString &s,
                                                      Expression::ResultType a,
                                                      Expression::ResultType b) {
   if (s == "+")
@@ -264,7 +264,7 @@ Expression::ResultType Expression::doBinaryOperation(const String &s,
   return Expression::ResultType();
 }
 
-Expression::ResultType Expression::parseNumber(const String &s) {
+Expression::ResultType Expression::parseNumber(const MyString &s) {
   if (s.isEmpty())
     return 0;
   bool flagDot = false, flagExp = false, numNegative = false,
@@ -324,35 +324,35 @@ Expression::ResultType Expression::parseNumber(const String &s) {
   }
 }
 
-void Expression::failWrongToken(const String &s) {
+void Expression::failWrongToken(const MyString &s) {
   throw std::invalid_argument("wrong token");
 }
 
-void Expression::failNotANumber(const String &s) {
+void Expression::failNotANumber(const MyString &s) {
   throw std::invalid_argument("not a number");
 }
 
-void Expression::failNotABrace(const String &s) {
+void Expression::failNotABrace(const MyString &s) {
   throw std::invalid_argument("not a brace");
 }
 
-void Expression::failNotAConstant(const String &s) {
+void Expression::failNotAConstant(const MyString &s) {
   throw std::invalid_argument("not a constant");
 }
 
-void Expression::failNotAnUnaryOperator(const String &s) {
+void Expression::failNotAnUnaryOperator(const MyString &s) {
   throw std::invalid_argument("not an unary operator");
 }
 
-void Expression::failNotABinaryOperator(const String &s) {
+void Expression::failNotABinaryOperator(const MyString &s) {
   throw std::invalid_argument("not a binary operator");
 }
 
-void Expression::failWrongAssociativity(const String &s) {
+void Expression::failWrongAssociativity(const MyString &s) {
   throw std::invalid_argument("unknown associativity");
 }
 
-void Expression::failWrongBraceType(const String &s) {
+void Expression::failWrongBraceType(const MyString &s) {
   throw std::invalid_argument("wrong brace type");
 }
 

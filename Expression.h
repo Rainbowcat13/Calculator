@@ -4,7 +4,7 @@
 #include "HashMap.h"
 #include "List.h"
 #include "Queue.h"
-#include "String.h"
+#include "mystring.h"
 
 class Expression {
 public:
@@ -15,44 +15,44 @@ public:
     Associativity_Right,
     Associativity_Unknown
   };
-  explicit Expression(Queue<String>);
+  explicit Expression(Queue<MyString>);
   Expression(const Expression &);
   ResultType evaluate() const;
-  Queue<String> getPostfix() const;
-  List<String> getVariablesNames() const;
-  ResultType getVariable(String &) const;
-  void setVariable(String &, ResultType);
-  static bool isNumber(const String &);
-  static bool isOperator(const String &);
-  static bool isUnaryOperator(const String &);
-  static bool isBinaryOperator(const String &);
-  static bool isFunction(const String &);
-  static bool isUnaryFunction(const String &);
-  static bool isBinaryFunction(const String &);
-  static bool isConstant(const String &);
-  static bool isLeftBrace(const String &);
-  static bool isRightBrace(const String &);
-  static bool isComma(const String &);
-  static bool isVariable(const String &);
-  static int precedence(const String &);
-  static BraceType braceType(const String &);
-  static Associativity associativity(const String &);
-  static ResultType getConstant(const String &);
-  static ResultType doUnaryOperation(const String &, ResultType);
-  static ResultType doBinaryOperation(const String &, ResultType, ResultType);
-  static ResultType parseNumber(const String &);
+  Queue<MyString> getPostfix() const;
+  List<MyString> getVariablesNames() const;
+  ResultType getVariable(MyString &) const;
+  void setVariable(MyString &, ResultType);
+  static bool isNumber(const MyString &);
+  static bool isOperator(const MyString &);
+  static bool isUnaryOperator(const MyString &);
+  static bool isBinaryOperator(const MyString &);
+  static bool isFunction(const MyString &);
+  static bool isUnaryFunction(const MyString &);
+  static bool isBinaryFunction(const MyString &);
+  static bool isConstant(const MyString &);
+  static bool isLeftBrace(const MyString &);
+  static bool isRightBrace(const MyString &);
+  static bool isComma(const MyString &);
+  static bool isVariable(const MyString &);
+  static int precedence(const MyString &);
+  static BraceType braceType(const MyString &);
+  static Associativity associativity(const MyString &);
+  static ResultType getConstant(const MyString &);
+  static ResultType doUnaryOperation(const MyString &, ResultType);
+  static ResultType doBinaryOperation(const MyString &, ResultType, ResultType);
+  static ResultType parseNumber(const MyString &);
 
 private:
-  Queue<String> postfix;
-  HashMap<String, ResultType> variables;
-  static void failWrongToken(const String &);
-  static void failNotANumber(const String &);
-  static void failNotAConstant(const String &);
-  static void failNotABrace(const String &);
-  static void failNotAnUnaryOperator(const String &);
-  static void failNotABinaryOperator(const String &);
-  static void failWrongAssociativity(const String &);
-  static void failWrongBraceType(const String &);
+  Queue<MyString> postfix;
+  HashMap<MyString, ResultType> variables;
+  static void failWrongToken(const MyString &);
+  static void failNotANumber(const MyString &);
+  static void failNotAConstant(const MyString &);
+  static void failNotABrace(const MyString &);
+  static void failNotAnUnaryOperator(const MyString &);
+  static void failNotABinaryOperator(const MyString &);
+  static void failWrongAssociativity(const MyString &);
+  static void failWrongBraceType(const MyString &);
   static void failMissingLeftBrace();
   static void failMissingRightBrace();
   static void failMissingOperand();

@@ -4,10 +4,16 @@
 #include <QDebug>
 #include <QLabel>
 #include <QPushButton>
+#include <QString>
+#include <QVector>
+#include "expression.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    // initialized constants
+    consts = {"pi", "e", ""};
+
     // Set main window design
     setFixedSize(1366, 768);
     setWindowTitle(QString("Calculator"));
@@ -24,9 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     inputExpressionEdit->setFont(mainFont);
     inputExpressionEdit->setText(defaultExpression);
     inputExpressionEdit->setAlignment(Qt::AlignCenter);
-    inputExpressionEdit->setStyleSheet("color: green");
-    connect(inputExpressionEdit, SIGNAL(textChanged(const QString &)),
-            this, SLOT(inputChanged(const QString &)));
 
     // Created field for inversed notation
     inversedNotationField = new QLineEdit;
@@ -40,8 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     calcButton = new QPushButton;
     calcButton->setFont(mainFont);
     calcButton->setText("Calculate");
-    calcButton->setStyleSheet("background-color: blue;color: white");
-    connect(calcButton, SIGNAL(clicked()), this, SLOT(calculate()));
+    connect(calcButton, SIGNAL(clicked()), this, SLOT(processInput()));
 
     // Created field for answer
     answerField = new QLineEdit;
@@ -60,22 +62,70 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(mCentralWidget);
 }
 
-
-void MainWindow::inputChanged(const QString &s) {
-    qDebug() << "PIZDA";
+void MainWindow::processInput() {
+    enterVariables();
+    calculate();
 }
 
 void MainWindow::calculate() {
-    enterVariables();
-    qDebug() << "aaaa";
+   // jopa
 }
 
-
+QVector<QString> MainWindow::getVariables() {
+    QVector<QString> ans;
+    int it = 0;
+    auto s = inputExpressionEdit->text();
+    int n = s.size();
+    while (it < n) {
+        while (it < n && !s[it].isLetter()) it++;
+        QString curs = "";
+        while (it < n && s[it].isLetter()) {
+            curs.push_back(s[it]);
+            it++;
+        }
+        if (it < n && s[it] == "(") {
+            continue;
+        }
+        else {
+            if (consts.find(curs) == consts.end())
+                ans.push_back(curs);
+        }
+    }
+    return ans;
+}
 
 void MainWindow::enterVariables() {
     // Created new window for entering variables
     varWindow = new QWidget;
+    varWindow->setFixedSize(500, 500);
+    QGridLayout* varLayout = new QGridLayout;
+    QVector<QString> variables = getVariables();
+    if (variables.empty()) {
+        return;
+    }
+    QVector<QLineEdit*> varEdits;
+    int cnt = 0;
+    for (auto s: variables) {
+        QLabel* currentVariable = new QLabel;
+        currentVariable->setText("Enter " + s + " :");
+        currentVariable->setFont(mainFont);
+        currentVariable->setAlignment(Qt::AlignLeft);
 
+        QLineEdit* currentEdit = new QLineEdit;
+        currentEdit->setFont(mainFont);
 
+        varLayout->addWidget(currentVariable, cnt, 0, 1, 1);
+        varLayout->addWidget(currentEdit, cnt++, 1, 1, 3);
+        varEdits.push_back(currentEdit);
+    }
+
+    QPushButton* countButton = new QPushButton;
+    countButton->setFont(mainFont);
+    countButton->setText("Count!");
+    countButton->setStyleSheet("color: green");
+    varLayout->addWidget(countButton, cnt, 1, 1, 2);
+    connect(countButton, SIGNAL(clicked()), this, SLOT(calculate()));
+
+    varWindow->setLayout(varLayout);
     varWindow->show();
 }
