@@ -13,6 +13,7 @@
 #include "Queue.h"
 #include <string>
 #include <QKeyEvent>
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Set main window design
     setFixedSize(1366, 768);
     setWindowTitle(QString("Calculator"));
+    setWindowIcon(QIcon("X:\\Calculator\\images\\icon.png"));
 
     // Created main and default widgets
     mCentralWidget = new QWidget;
