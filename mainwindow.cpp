@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     setFixedSize(1366, 768);
     setWindowTitle(QString("Calculator"));
     setWindowIcon(QIcon("X:\\Calculator\\images\\icon.png"));
+    setStyleSheet("MainWindow{background-color: rgb(176, 224, 230)};");
 
     // Created main and default widgets
     mCentralWidget = new QWidget;
@@ -38,6 +39,28 @@ MainWindow::MainWindow(QWidget *parent)
     inputExpressionEdit->setFont(mainFont);
     inputExpressionEdit->setText(defaultExpression);
     inputExpressionEdit->setAlignment(Qt::AlignCenter);
+    inputExpressionEdit->setStyleSheet("QLineEdit{"
+                                       "background-color: rgb(192, 192, 192);"
+                                       "color: black;"
+                                       "border-style: inset;"
+                                       "border-width: 4px;"
+                                       "border-radius: 12px;"
+                                       "border-color: black;"
+                                       "min-width: 10em;"
+                                       "padding: 6px;"
+                                       "selection-background-color: rgb(0, 191, 255);"
+                                       "selection-color: black;}"
+                                       "QLineEdit:hover{"
+                                       "background-color: rgb(255, 255, 240);"
+                                       "color: black;"
+                                       "border-style: inset;"
+                                       "border-width: 4px;"
+                                       "border-radius: 12px;"
+                                       "border-color: black;"
+                                       "min-width: 10em;"
+                                       "padding: 6px;"
+                                       "selection-background-color: rgb(0, 191, 255);"
+                                       "selection-color: black;}");
 
     // Created field for inversed notation
     inversedNotationField = new QLineEdit;
@@ -46,11 +69,40 @@ MainWindow::MainWindow(QWidget *parent)
     inversedNotationField->setAlignment(Qt::AlignCenter);
     inversedNotationField->setStyleSheet("color: black");
     inversedNotationField->setReadOnly(1);
+    inversedNotationField->setStyleSheet("QLineEdit{"
+                                         "background-color: rgb(192, 192, 192);"
+                                         "color: black;"
+                                         "border-style: inset;"
+                                         "border-width: 4px;"
+                                         "border-radius: 12px;"
+                                         "border-color: black;"
+                                         "min-width: 10em;"
+                                         "padding: 6px;"
+                                         "selection-background-color: rgb(0, 191, 255);"
+                                         "selection-color: black;}");
 
     // Created button for calculating and connected it with signal
     calcButton = new QPushButton;
     calcButton->setFont(mainFont);
     calcButton->setText("Calculate");
+    //calcButton->setFixedSize(30, 60);
+    calcButton->setStyleSheet("QPushButton{"
+                              "background-color: rgb(248, 248, 255);"
+                              "color: black;"
+                              "border-style: inset;"
+                              "border-width: 2px;"
+                              "border-radius: 8px;"
+                              "border-color: black;"
+                              "min-width: 10em;"
+                              "padding: 6px;}"
+                              "QPushButton:pressed{"
+                              "background-color: rgb(248, 248, 255);"
+                              "color: black;"
+                              "border-width: 4px;"
+                              "border-radius: 12px;"
+                              "border-color: black;"
+                              "min-width: 10em;"
+                              "padding: 6px;}");
     connect(calcButton, SIGNAL(clicked()), this, SLOT(processInput()));
 
     // Created window for errors
@@ -60,6 +112,15 @@ MainWindow::MainWindow(QWidget *parent)
     errorWindow->setStyleSheet("color: green");
     errorWindow->setAlignment(Qt::AlignCenter);
     errorWindow->setReadOnly(1);
+    errorWindow->setStyleSheet("QLineEdit{"
+                               "background-color: rgb(176, 224, 230);"
+                               "color: rgb(34, 139, 34);"
+                               "border-style: solid;"
+                               "border-width: 4px;"
+                               "border-radius: 12px;"
+                               "border-color: red;"
+                               "min-width: 10em;"
+                               "padding: 6px;}");
 
     // Created field for answer
     answerField = new QLineEdit;
@@ -67,14 +128,45 @@ MainWindow::MainWindow(QWidget *parent)
     answerField->setText(answer);
     answerField->setAlignment(Qt::AlignCenter);
     answerField->setReadOnly(1);
+    answerField->setStyleSheet("QLineEdit{"
+                               "background-color: rgb(192, 192, 192);"
+                               "color: black;"
+                               "border-style: inset;"
+                               "border-width: 4px;"
+                               "border-radius: 12px;"
+                               "border-color: black;"
+                               "min-width: 10em;"
+                               "padding: 6px;"
+                               "selection-background-color: rgb(0, 191, 255);"
+                               "selection-color: black;}");
+
+    QLabel* errorLabel = new QLabel;
+    errorLabel->setText("Errors in expression");
+    errorLabel->setFont(mainFont);
+
+    QLabel* expressionLabel = new QLabel;
+    expressionLabel->setText("Enter your expression here");
+    expressionLabel->setFont(mainFont);
+
+    QLabel* inversedNotationLabel = new QLabel;
+    inversedNotationLabel->setText("Inversed notation of expression");
+    inversedNotationLabel->setFont(mainFont);
+
+    QLabel* answerLabel = new QLabel;
+    answerLabel->setText("Answer");
+    answerLabel->setFont(mainFont);
 
     // Configured layout and added all widgets
     QGridLayout* mainLayout = new QGridLayout;
-    mainLayout->addWidget(errorWindow, 0, 0, 5, 20);
-    mainLayout->addWidget(inputExpressionEdit, 5, 0, 10, 10);
-    mainLayout->addWidget(inversedNotationField, 15, 0, 10, 10);
-    mainLayout->addWidget(calcButton, 5, 10, 10, 10);
-    mainLayout->addWidget(answerField, 15, 10, 10, 10);
+    mainLayout->addWidget(errorLabel, 0, 80, 5, 60);
+    mainLayout->addWidget(inversedNotationLabel, 30, 75, 5, 60);
+    mainLayout->addWidget(expressionLabel, 15, 78, 5, 60);
+    mainLayout->addWidget(answerLabel, 45, 90, 5, 20);
+    mainLayout->addWidget(errorWindow, 5, 0, 10, 200);
+    mainLayout->addWidget(inputExpressionEdit, 20, 0, 10, 200);
+    mainLayout->addWidget(inversedNotationField, 35, 0, 10, 200);
+    mainLayout->addWidget(answerField, 50, 0, 10, 200);
+    mainLayout->addWidget(calcButton, 60, 80, 10, 40);
     mCentralWidget->setLayout(mainLayout);
     setCentralWidget(mCentralWidget);
 }
@@ -99,14 +191,30 @@ void MainWindow::calculate() {
     }
     catch (std::invalid_argument s) {
         errorWindow->setText(QString::fromStdString(s.what()));
-        errorWindow->setStyleSheet("color: red");
+        errorWindow->setStyleSheet("QLineEdit{"
+                                   "background-color: rgb(176, 224, 230);"
+                                   "color: red;"
+                                   "border-style: solid;"
+                                   "border-width: 4px;"
+                                   "border-radius: 12px;"
+                                   "border-color: red;"
+                                   "min-width: 10em;"
+                                   "padding: 6px;}");
         if (!variables.empty()) {
             varWindow->hide();
         }
         return;
     }
     errorWindow->setText("Everything is OK");
-    errorWindow->setStyleSheet("color: green");
+    errorWindow->setStyleSheet("QLineEdit{"
+                               "background-color: rgb(176, 224, 230);"
+                               "color: rgb(34, 139, 34);"
+                               "border-style: solid;"
+                               "border-width: 4px;"
+                               "border-radius: 12px;"
+                               "border-color: red;"
+                               "min-width: 10em;"
+                               "padding: 6px;}");
 
     auto aaa = std::to_string(static_cast<double>(preAnswer));
     answer = QString::fromStdString(aaa);
@@ -160,6 +268,8 @@ void MainWindow::processInput() {
     // Created new window for entering variables
     varWindow = new QWidget;
     varWindow->setFixedSize(500, 500);
+    varWindow->setWindowIcon(QIcon("X:\\Calculator\\images\\icon.png"));
+    varWindow->setStyleSheet("background-color: rgb(176, 224, 230);");
     QGridLayout* varLayout = new QGridLayout;
     variables = getVariables();
     if (variables.empty()) {
@@ -167,6 +277,7 @@ void MainWindow::processInput() {
         return;
     }
     int cnt = 0;
+    varEdits.clear();
     for (auto s: variables) {
         QLabel* currentVariable = new QLabel;
         currentVariable->setText("Enter " + s + " :");
@@ -176,6 +287,28 @@ void MainWindow::processInput() {
 
         QLineEdit* currentEdit = new QLineEdit;
         currentEdit->setFont(mainFont);
+        currentEdit->setStyleSheet("QLineEdit{"
+                                   "background-color: rgb(192, 192, 192);"
+                                   "color: black;"
+                                   "border-style: inset;"
+                                   "border-width: 4px;"
+                                   "border-radius: 12px;"
+                                   "border-color: black;"
+                                   "min-width: 10em;"
+                                   "padding: 6px;"
+                                   "selection-background-color: rgb(0, 191, 255);"
+                                   "selection-color: black;}"
+                                   "QLineEdit:hover{"
+                                   "background-color: rgb(255, 255, 240);"
+                                   "color: black;"
+                                   "border-style: inset;"
+                                   "border-width: 4px;"
+                                   "border-radius: 12px;"
+                                   "border-color: black;"
+                                   "min-width: 10em;"
+                                   "padding: 6px;"
+                                   "selection-background-color: rgb(0, 191, 255);"
+                                   "selection-color: black;}");
 
         varLayout->addWidget(currentVariable, cnt, 0, 1, 1);
         varLayout->addWidget(currentEdit, cnt++, 1, 1, 3);
@@ -185,7 +318,23 @@ void MainWindow::processInput() {
     QPushButton* countButton = new QPushButton;
     countButton->setFont(mainFont);
     countButton->setText("Count!");
-    countButton->setStyleSheet("color: green");
+    countButton->setStyleSheet("QPushButton{"
+                               "background-color: rgb(248, 248, 255);"
+                               "color: black;"
+                               "border-style: inset;"
+                               "border-width: 2px;"
+                               "border-radius: 8px;"
+                               "border-color: black;"
+                               "min-width: 10em;"
+                               "padding: 6px;}"
+                               "QPushButton:pressed{"
+                               "background-color: rgb(248, 248, 255);"
+                               "color: black;"
+                               "border-width: 4px;"
+                               "border-radius: 12px;"
+                               "border-color: black;"
+                               "min-width: 10em;"
+                               "padding: 6px;}");
     varLayout->addWidget(countButton, cnt, 1, 1, 2);
     connect(countButton, SIGNAL(clicked()), this, SLOT(calculate()));
 

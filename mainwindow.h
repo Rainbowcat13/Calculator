@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <set>
 #include <QKeyEvent>
+#include <QTextEdit>
 
 class MainWindow : public QMainWindow
 {
