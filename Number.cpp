@@ -223,9 +223,11 @@ bool Number::operator>=(const Number &n) const {
 }
 
 void Number::checkIntegral() {
-  if (isFloatingPoint() && static_cast<Integral>(f) == f) {
+  struct {
+    FloatingPoint operator()(FloatingPoint a) { return a >= 0 ? a : -a; }
+  } abs;
+  if (isFloatingPoint() && abs(f - static_cast<Integral>(f)) < Eps)
     makeIntegral();
-  }
 }
 
 void Number::makeInvalid() {
