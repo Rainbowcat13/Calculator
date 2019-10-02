@@ -1,4 +1,5 @@
 #include "Tokenizer.h"
+#include "Number.h"
 #include <stdexcept>
 
 Tokenizer::Tokenizer(const std::string &str) : s(str), pos(0) {}
@@ -18,8 +19,6 @@ Queue<std::string> Tokenizer::getAllTokens() {
 
 bool Tokenizer::isSpace(char c) { return c == ' '; }
 
-bool Tokenizer::isDigit(char c) { return c >= '0' && c <= '9'; }
-
 bool Tokenizer::isBrace(char c) {
   return c == '(' || c == ')' || c == '[' || c == ']';
 }
@@ -28,67 +27,79 @@ bool Tokenizer::isAlpha(char c) {
   return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
+bool Tokenizer::isUnderscore(char c) { return c == '_'; }
+
 bool Tokenizer::isOperator(char c) {
   return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
 
-bool Tokenizer::hasNextToken() { return pos < s.length(); }
+bool Tokenizer::isComma(char c) { return c == ','; }
+
+bool Tokenizer::hasNextToken() const { return pos < s.length(); }
 
 void Tokenizer::skipSpaces() {
-  while (isSpace(s[pos]))
+  while (isSpace(c()))
     pos++;
 }
 
 std::string Tokenizer::getNextToken() {
-  if (isDigit(s[pos]))
+  if (Number::isDigit(c()))
     return getNumber();
-  if (isAlpha(s[pos]))
+  if (isAlpha(c()))
     return getName();
-  if (isBrace(s[pos]))
+  if (isBrace(c()))
     return getBrace();
-  if (isOperator(s[pos]))
+  if (isOperator(c()))
     return getOperator();
-  if (s[pos] == ',')
-    return s.substr(pos++, 1);
-  throw std::invalid_argument(std::string("unexpected ") + s[pos]);
+  if (isComma(c()))
+    return getComma();
+  throw std::invalid_argument(std::string("unexpected ") + c());
 }
 
 std::string Tokenizer::getNumber() {
-  std::size_t b = pos;
-  int n = s.length(), dot = -2, exp = -2;
+  std::size_t n = s.length(), b = pos;
+  int dot = -2, exp = -2, sign = -1;
   while (pos < n)
-    if (s[pos] == '.' && pos > b && exp < 0 && dot < 0)
+    if (Number::isDot(c()) && pos > b && exp < 0 && dot < 0)
       dot = pos++;
-    else if (s[pos] == 'e' && pos > b && exp < 0 && dot != pos - 1)
+    else if (Number::isExp(c()) && pos > b && exp < 0 && dot != pos - 1)
       exp = pos++;
-    else if ((s[pos] == '-' || s[pos] == '+') && (exp == pos - 1 || b == pos))
-      pos++;
-    else if (s[pos] >= '0' && s[pos] <= '9')
+    else if (Number::isSign(c()) && (exp == pos - 1 || b == pos))
+      sign = pos++;
+    else if (Number::isDigit(c()))
       pos++;
     else
       break;
-  if (dot == pos - 1 || exp == pos - 1)
-    throw std::invalid_argument(std::string("no digit after ") + s[pos - 1]);
+  if (dot == pos - 1 || exp == pos - 1 || sign == pos - 1)
+    throw std::invalid_argument(std::string("unexpected ") + c());
   return s.substr(b, pos - b);
 }
 
 std::string Tokenizer::getBrace() {
-  if (!isBrace(s[pos]))
-    return "";
+  if (!isBrace(c()))
+    throw std::invalid_argument(std::string("unexpected ") + c());
   return s.substr(pos++, 1);
 }
 
 std::string Tokenizer::getOperator() {
-  if (!isOperator(s[pos]))
-    return "";
+  if (!isOperator(c()))
+    throw std::invalid_argument(std::string("unexpected ") + c());
+  return s.substr(pos++, 1);
+}
+
+std::string Tokenizer::getComma() {
+  if (!isComma(c()))
+    throw std::invalid_argument(std::string("unexpected ") + c());
   return s.substr(pos++, 1);
 }
 
 std::string Tokenizer::getName() {
-  std::size_t b = pos;
-  if (!isAlpha(s[b]))
-    return "";
-  for (; isAlpha(s[pos]) || s[pos] == '_'; pos++) {
-  }
+  std::size_t n = s.length(), b = pos;
+  if (!isAlpha(c()))
+    throw std::invalid_argument(std::string("unexpected ") + c());
+  while (pos < n && (isAlpha(c()) || Number::isDigit(c()) || isUnderscore(c())))
+    pos++;
   return s.substr(b, pos - b);
 }
+
+char Tokenizer::c() const { return s[pos]; }

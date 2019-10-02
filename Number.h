@@ -10,6 +10,10 @@ public:
   using FloatingPoint = double;
   using Integral = long long;
   static const constexpr FloatingPoint Eps = 1e-9;
+  static bool isDot(char);
+  static bool isExp(char);
+  static bool isSign(char);
+  static bool isDigit(char);
   static bool isNumber(const std::string &);
   static Number parseNumber(const std::string &);
   Number();

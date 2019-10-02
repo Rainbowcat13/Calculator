@@ -7,6 +7,12 @@
 
 class Tokenizer {
 public:
+  static bool isSpace(char);
+  static bool isBrace(char);
+  static bool isAlpha(char);
+  static bool isOperator(char);
+  static bool isComma(char);
+  static bool isUnderscore(char);
   Tokenizer(const std::string &);
   Tokenizer(const Tokenizer &);
   Queue<std::string> getAllTokens();
@@ -14,18 +20,15 @@ public:
 private:
   const std::string s;
   std::size_t pos;
-  static bool isSpace(char);
-  static bool isDigit(char);
-  static bool isBrace(char);
-  static bool isAlpha(char);
-  static bool isOperator(char);
-  bool hasNextToken();
+  bool hasNextToken() const;
   void skipSpaces();
   std::string getNextToken();
   std::string getNumber();
   std::string getBrace();
   std::string getOperator();
+  std::string getComma();
   std::string getName();
+  char c() const;
 };
 
 #endif

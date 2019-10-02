@@ -1,6 +1,7 @@
 #include "Expression.h"
 #include "Math.h"
 #include "Stack.h"
+#include "Tokenizer.h"
 #include <stdexcept>
 
 Expression::Expression(Queue<std::string> q) {
@@ -164,12 +165,12 @@ bool Expression::isRightBrace(const std::string &s) {
 bool Expression::isComma(const std::string &s) { return s == ","; }
 
 bool Expression::isVariable(const std::string &s) {
-  if (isFunction(s) || isConstant(s) || s[0] < 'a' || s[0] > 'z')
+  if (isFunction(s) || isConstant(s) || !Tokenizer::isAlpha(s[0]))
     return false;
-  for (std::size_t i = 0; i < s.length(); i++) {
-    if ((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'z'))
+  for (std::size_t i = 0; i < s.length(); i++)
+    if (!Number::isDigit(s[i]) && !Tokenizer::isAlpha(s[i]) &&
+        !Tokenizer::isUnderscore(s[i]))
       return false;
-  }
   return true;
 }
 
