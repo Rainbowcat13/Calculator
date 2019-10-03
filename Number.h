@@ -148,11 +148,9 @@ template <typename T> Number &Number::operator/=(const T &n) {
     return *this;
   } else if (isFloatingPoint()) {
     f /= static_cast<FloatingPoint>(n);
-  } else if (std::is_floating_point<T>::value) {
+  } else {
     type = Type_FloatingPoint;
     f = static_cast<FloatingPoint>(i) / static_cast<FloatingPoint>(n);
-  } else {
-    i /= static_cast<Integral>(n);
   }
   checkIntegral();
   return *this;
