@@ -1,0 +1,20 @@
+Input:
+	sin(cos(sin(sin(log(10, sin(cos(sin(cos(-1)))))))))
+Answer:
+	0.837822
+
+Input:
+	2^(3+(2^(1*1+2)^1^(1+1*1))*2/(1+1))
+Answer:
+	2048
+
+Input:
+	j*j*j+i^3+k-(k*j*i + 1), j = 2, k = 3, i = 1
+Answer:
+	29
+
+Input:
+	log(13, 168)
+Answer:
+	1.998029
+

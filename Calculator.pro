@@ -25,20 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++17
 
 SOURCES += \
+        Hash.cpp \
+        Number.cpp \
+        Tokenizer.cpp \
         expression.cpp \
         main.cpp \
         mainwindow.cpp \
-        math.cpp \
-        mystring.cpp
+        math.cpp
 
 HEADERS += \
         Hash.h \
         HashMap.h \
         List.h \
         ListNode.h \
+        Number.h \
         Pair.h \
         Queue.h \
         Stack.h \
+        Tokenizer.h \
         expression.h \
         mainwindow.h \
         math.h \
