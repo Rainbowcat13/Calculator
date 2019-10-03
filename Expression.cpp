@@ -9,7 +9,7 @@ Expression::Expression(Queue<std::string> q) {
   Stack<std::string> s;
   s.push(std::string("("));
   q.push(std::string(")"));
-  bool unary = true, fnBraces = false, noClose = true;
+  bool unary = true, fnBraces = false, noClose = false;
   std::string v;
   while (!q.isEmpty()) {
     if (s.isEmpty())
