@@ -14,6 +14,7 @@
 #include <string>
 #include <QKeyEvent>
 #include <QIcon>
+#include "List.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -238,30 +239,33 @@ void MainWindow::keyPressEvent(QKeyEvent *event){
 }
 
 QVector<QString> MainWindow::getVariables() {
-    std::set<QString> ans;
-    int it = 0;
-    auto s = inputExpressionEdit->text();
-    int n = s.size();
-    while (it < n) {
-        while (it < n && !s[it].isLetter()) it++;
-        QString curs = "";
-        while (it < n && s[it].isLetter()) {
-            curs.push_back(s[it]);
-            it++;
-        }
-        if (it < n && s[it] == "(") {
-            continue;
-        }
-        else {
-            if (consts.find(curs) == consts.end())
-                ans.insert(curs);
+    QVector<QString> ans;
+    auto expressionString = inputExpressionEdit->text().toStdString();
+    Number preAnswer;
+    Tokenizer t = Tokenizer(expressionString);
+    Expression mainExpression = Expression({});
+    try {
+        auto tt = t.getAllTokens();
+        mainExpression = Expression(tt);
+        auto lst = mainExpression.getVariablesNames();
+        for (int i = 0; i < lst.size(); i++) {
+            ans.push_back(QString::fromStdString(lst[i]));
         }
     }
-    QVector<QString> aans;
-    for (auto elem: ans) {
-        aans.push_back(elem);
+    catch (std::invalid_argument s) {
+        errorWindow->setText(QString::fromStdString(s.what()));
+        errorWindow->setStyleSheet("QLineEdit{"
+                                   "background-color: rgb(176, 224, 230);"
+                                   "color: red;"
+                                   "border-style: solid;"
+                                   "border-width: 4px;"
+                                   "border-radius: 12px;"
+                                   "border-color: red;"
+                                   "min-width: 10em;"
+                                   "padding: 6px;}");
+        return {};
     }
-    return aans;
+    return ans;
 }
 
 void MainWindow::processInput() {
