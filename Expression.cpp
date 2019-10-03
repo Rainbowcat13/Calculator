@@ -2,7 +2,6 @@
 #include "Math.h"
 #include "Stack.h"
 #include "Tokenizer.h"
-#include <iostream>
 #include <stdexcept>
 
 Expression::Expression(Queue<std::string> q) {
@@ -223,7 +222,6 @@ Number Expression::getConstant(const std::string &s) {
 }
 
 Number Expression::doUnaryOperation(const std::string &s, Number a) {
-  std::cout << s << " " << static_cast<double>(a) << std::endl;
   if (s == "++")
     return +a;
   if (s == "--")
@@ -247,8 +245,6 @@ Number Expression::doUnaryOperation(const std::string &s, Number a) {
 }
 
 Number Expression::doBinaryOperation(const std::string &s, Number a, Number b) {
-  std::cout << static_cast<double>(a) << " " << s << " "
-            << static_cast<double>(b) << std::endl;
   if (s == "+")
     return a + b;
   if (s == "-")
