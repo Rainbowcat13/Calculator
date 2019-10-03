@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QString>
 #include <QVector>
-#include "expression.h"
+#include "Expression.h"
 #include "Tokenizer.h"
 #include "Number.h"
 #include <stdexcept>

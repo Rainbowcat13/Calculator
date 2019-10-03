@@ -8,7 +8,7 @@ Expression::Expression(Queue<std::string> q) {
   Stack<std::string> s;
   s.push(std::string("("));
   q.push(std::string(")"));
-  bool unary = true, fnBraces = false;
+  bool unary = true, fnBraces = false, noClose = false;
   std::string v;
   while (!q.isEmpty()) {
     if (s.isEmpty())
@@ -21,50 +21,56 @@ Expression::Expression(Queue<std::string> q) {
     if (Number::isNumber(v) || isConstant(v)) {
       postfix.push(v);
       unary = false;
+      noClose = false;
     } else if (isVariable(v)) {
       variables[v] = Number();
       postfix.push(v);
       unary = false;
+      noClose = false;
     } else if (isUnaryOperator(v)) {
       s.push(v);
-      unary = false;
+      unary = true;
+      noClose = false;
     } else if (isFunction(v)) {
       s.push(v);
       unary = false;
       fnBraces = true;
+      noClose = false;
     } else if (isBinaryOperator(v)) {
       if (getAssocType(v) == AssocType_Right) {
-        while (getPrecedence(v) < getPrecedence(s.top())) {
+        while (getPrecedence(v) < getPrecedence(s.top()))
           postfix.push(s.pop());
-        }
       } else if (getAssocType(v) == AssocType_Left) {
-        while (getPrecedence(v) <= getPrecedence(s.top())) {
+        while (getPrecedence(v) <= getPrecedence(s.top()))
           postfix.push(s.pop());
-        }
       } else {
         failWrongAssociativity(v);
       }
       s.push(v);
       unary = true;
+      noClose = false;
     } else if (isLeftBrace(v)) {
       if (fnBraces && getBraceType(v) != BraceType_Round)
         failWrongBraceType(v);
       s.push(v);
       unary = true;
+      noClose = true;
       fnBraces = false;
     } else if (isRightBrace(v)) {
-      while (!isLeftBrace(s.top())) {
+      if (noClose)
+        failMissingOperand();
+      while (!isLeftBrace(s.top()))
         postfix.push(s.pop());
-      }
       if (getBraceType(v) != getBraceType(s.top()))
         failWrongBraceType(v);
       s.pop();
       unary = false;
+      noClose = false;
     } else if (isComma(v)) {
-      while (!isLeftBrace(s.top())) {
+      while (!isLeftBrace(s.top()))
         postfix.push(s.pop());
-      }
       unary = true;
+      noClose = false;
     } else {
       failWrongToken(v);
     }
@@ -143,7 +149,7 @@ bool Expression::isFunction(const std::string &s) {
 
 bool Expression::isUnaryFunction(const std::string &s) {
   return s == "sin" || s == "cos" || s == "exp" || s == "abs" || s == "sqrt" ||
-         s == "cbrt";
+         s == "cbrt" || s == "ln";
 }
 
 bool Expression::isBinaryFunction(const std::string &s) {
@@ -220,6 +226,8 @@ Number Expression::doUnaryOperation(const std::string &s, Number a) {
     return +a;
   if (s == "--")
     return -a;
+  if (s == "ln")
+    return Math::log(a);
   if (s == "sin")
     return Math::sin(a);
   if (s == "cos")

@@ -58,7 +58,7 @@ std::string Tokenizer::getNextToken() {
 
 std::string Tokenizer::getNumber() {
   std::size_t n = s.length(), b = pos;
-  int dot = -2, exp = -2, sign = -1;
+  int dot = -1, exp = -1, sign = -1;
   while (pos < n)
     if (Number::isDot(c()) && pos > b && exp < 0 && dot < 0)
       dot = pos++;

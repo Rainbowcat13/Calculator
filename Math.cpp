@@ -46,36 +46,28 @@ Number Math::log(const Number &a, const Number &b) {
     throw std::invalid_argument("logarithm with base = 1");
   if (b <= 0)
     throw std::invalid_argument("logarithm of negative number");
-  // TODO: use log2 and exp2 instead
   return log(b) / log(a);
 }
 
 Number Math::log(const Number &a) {
   if (a <= 0)
     throw std::invalid_argument("logarithm of negative number");
-  // TODO: reimplement logarithm
-  struct {
-    Number::FloatingPoint operator()(Number::FloatingPoint n) {
-      Number::FloatingPoint res = 1.0;
-      for (int i = 13; i > 0; i--)
-        res = 1.0 + n * res / i;
-      return res;
-    }
-  } e;
   Number::FloatingPoint n = static_cast<Number::FloatingPoint>(a);
-  Number::FloatingPoint x0 = n / 2, x = x0 - (e(x0) - n) / (e(x0));
-  while (x - x0 > Number::Eps || x - x0 < -Number::Eps) {
-    x0 = x;
-    x = x0 - (e(x0) - n) / (e(x0));
+  Number::FloatingPoint t = 1;
+  Number::FloatingPoint m = (n - 1) / (n + 1);
+  Number::FloatingPoint r = 1;
+  Number::FloatingPoint diff = 19;
+  Number::FloatingPoint div = 1;
+  Number::FloatingPoint p = r;
+  while (diff > Number::Eps) {
+    t *= m * m;
+    div += 2;
+    r += t / div;
+    diff = r - p >= 0 ? r - p : p - r;
+    p = r;
   }
-  return Number(x);
-}
-
-Number Math::log2(const Number &a) {
-  if (a <= 0)
-    throw std::invalid_argument("logarithm of negative number");
-  // TODO: implement logarithm
-  throw std::logic_error("binary logarithm is not implemented");
+  r *= 2 * m;
+  return Number(r);
 }
 
 Number Math::pow(const Number &a, const Number &b) {
@@ -88,7 +80,6 @@ Number Math::pow(const Number &a, const Number &b) {
   } else if (b.isFloatingPoint()) {
     if (a <= 0)
       throw std::invalid_argument("floating-point power with negative base");
-    // TODO: use exp2 and log2 instead
     return exp(log(a) * b);
   } else if (a.isFloatingPoint()) {
     Number::Integral p = static_cast<Number::Integral>(b);
@@ -121,11 +112,6 @@ Number Math::exp(const Number &a) {
   for (int i = 13; i > 0; i--)
     res = 1.0 + n * res / i;
   return Number(res);
-}
-
-Number Math::exp2(const Number &a) {
-  // TODO: implement exponentiation
-  throw std::logic_error("binary exponentiation is not implemented");
 }
 
 Number Math::abs(const Number &a) { return a >= 0 ? +a : -a; }

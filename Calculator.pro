@@ -28,10 +28,10 @@ SOURCES += \
         Hash.cpp \
         Number.cpp \
         Tokenizer.cpp \
-        expression.cpp \
+        Expression.cpp \
         main.cpp \
         mainwindow.cpp \
-        math.cpp
+        Math.cpp
 
 HEADERS += \
         Hash.h \
@@ -39,14 +39,12 @@ HEADERS += \
         List.h \
         ListNode.h \
         Number.h \
-        Pair.h \
         Queue.h \
         Stack.h \
         Tokenizer.h \
-        expression.h \
+        Expression.h \
         mainwindow.h \
-        math.h \
-        mystring.h
+        Math.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
